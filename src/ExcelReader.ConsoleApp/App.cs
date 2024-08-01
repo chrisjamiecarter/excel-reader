@@ -37,41 +37,7 @@ internal class App : IHostedService
             {
                 try
                 {
-                    var dataFile1 = new DataFile
-                    {
-                        Id = 1,
-                        DirectoryPath = "TEST_DirectoryPath",
-                        Name = "TEST_Name",
-                        Extension = ".test",
-                        Size = 12345
-                    };
-                    _logger.LogInformation("Creating = {dataFile}", dataFile1);
-                    var created = await _dataFileController.CreateAsync(dataFile1);
-                    _logger.LogInformation("Result = {isCreated}", created);
-
-                    _logger.LogInformation("Getting = {dataFile}", dataFile1);
-                    var returned = await _dataFileController.GetAsync(dataFile1.Id);
-                    _logger.LogInformation("Result = {returned}", returned);
-
-                    _logger.LogInformation("Deleting = {dataFile}", dataFile1);
-                    var deleted = await _dataFileController.DeleteAsync(dataFile1);
-                    _logger.LogInformation("Result = {isDeleted}", deleted);
-
-                    _logger.LogInformation("Getting = {dataFile}", dataFile1);
-                    returned = await _dataFileController.GetAsync(dataFile1.Id);
-                    _logger.LogInformation("Result = {returned}", returned);
-
-                    var dataFile2 = new DataFile
-                    {
-                        Id = 2,
-                        DirectoryPath = "TEST_DirectoryPath2",
-                        Name = "TEST_Name2",
-                        Extension = ".test2",
-                        Size = 12345
-                    };
-                    _logger.LogInformation("Creating = {dataFile}", dataFile2);
-                    created = await _dataFileController.CreateAsync(dataFile2);
-                    _logger.LogInformation("Result = {isCreated}", created);
+                    
 
                     _logger.LogInformation("Press any key to continue...");
                     Console.ReadKey();

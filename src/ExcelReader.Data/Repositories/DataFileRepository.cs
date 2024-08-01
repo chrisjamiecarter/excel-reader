@@ -1,4 +1,5 @@
 ﻿using ExcelReader.Data.Entities;
+using static Dapper.SqlMapper;
 
 namespace ExcelReader.Data.Repositories;
 

@@ -1,10 +1,10 @@
 ﻿using System.Data;
-using System.Reflection;
-using Dapper;
+using System.Data.Common;
 using System.Data.SQLite;
-using Database = SQLite;
-using static Dapper.SqlMapper;
+using System.Reflection;
 using System.Text;
+using Dapper;
+using Database = SQLite;
 
 namespace ExcelReader.Data.Repositories;
 
@@ -13,7 +13,7 @@ public class SqliteRepository<TEntity> : IRepository<TEntity> where TEntity : cl
     #region Constants
 
     private readonly string _databaseName = "ExcelReader";
-    
+
     private readonly string _databaseExtension = ".db";
 
     #endregion
@@ -24,7 +24,6 @@ public class SqliteRepository<TEntity> : IRepository<TEntity> where TEntity : cl
         EnsureDeleted();
         EnsureCreated();
     }
-
 
     #endregion
     #region Properties
@@ -82,9 +81,13 @@ public class SqliteRepository<TEntity> : IRepository<TEntity> where TEntity : cl
         }
     }
 
-    public async Task<IReadOnlyList<TEntity>> GetAsync()
+    public async Task<IEnumerable<TEntity>> GetAsync()
     {
-        throw new NotImplementedException();
+        string tableName = GetTableName();
+        string query = $"SELECT * FROM {tableName}";
+
+        using var connection = new SQLiteConnection(ConnectionString);
+        return await connection.QueryAsync<TEntity>(query);
     }
 
     public async Task<TEntity?> GetAsync(int id)
@@ -182,7 +185,7 @@ public class SqliteRepository<TEntity> : IRepository<TEntity> where TEntity : cl
 
         return values;
     }
-        
+
     protected IEnumerable<PropertyInfo> GetProperties(bool excludeKey = false)
     {
         var properties = typeof(TEntity).GetProperties()

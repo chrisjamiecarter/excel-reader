@@ -26,13 +26,11 @@ internal class Program
         
         try
         {
-
             Log.Information("Application starting");
-
+            
             var builder = Host.CreateDefaultBuilder(args);
 
-            // Add services to the container.
-            builder.InstallServices();
+            builder.AddDependancies();
 
             await builder.RunConsoleAsync();
 

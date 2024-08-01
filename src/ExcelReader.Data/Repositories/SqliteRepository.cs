@@ -1,14 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data;
+﻿using System.Data;
 using System.Reflection;
 using Dapper;
 using System.Data.SQLite;
 using Database = SQLite;
+using static Dapper.SqlMapper;
+using System.Text;
 
 namespace ExcelReader.Data.Repositories;
 
-public class DapperRepository<TEntity> : IRepository<TEntity> where TEntity : class
+public class SqliteRepository<TEntity> : IRepository<TEntity> where TEntity : class
 {
     #region Constants
 
@@ -19,7 +19,7 @@ public class DapperRepository<TEntity> : IRepository<TEntity> where TEntity : cl
     #endregion
     #region Constructors
 
-    public DapperRepository()
+    public SqliteRepository()
     {
         EnsureDeleted();
         EnsureCreated();
@@ -42,19 +42,6 @@ public class DapperRepository<TEntity> : IRepository<TEntity> where TEntity : cl
     {
         var database = new Database.SQLiteConnection(FilePath);
         var result = database.CreateTable<TEntity>();
-
-        // HACK:
-        // SQLite.CreateTable doesnt care for the Table(DataAnnotations.Schema).
-        // So alter the Table name after but leave the generic creation to the library.
-        var entityName = typeof(TEntity).Name;
-        var tableName = GetTableName();
-
-        if (entityName != tableName)
-        {
-            var query = $"ALTER TABLE {entityName} RENAME TO {tableName};";
-            database.Execute(query);
-        }
-
         return result is Database.CreateTableResult.Created;
     }
 
@@ -72,7 +59,13 @@ public class DapperRepository<TEntity> : IRepository<TEntity> where TEntity : cl
 
     public async Task<int> DeleteAsync(TEntity entity)
     {
-        throw new NotImplementedException();
+        string tableName = GetTableName();
+        string keyColumn = GetKeyColumnName()!;
+        string keyProperty = GetKeyPropertyName()!;
+        string query = $"DELETE FROM {tableName} WHERE {keyColumn} = @{keyProperty}";
+
+        using var connection = new SQLiteConnection(ConnectionString);
+        return await connection.ExecuteAsync(query, entity);
     }
 
     public void EnsureCreated()
@@ -96,21 +89,43 @@ public class DapperRepository<TEntity> : IRepository<TEntity> where TEntity : cl
 
     public async Task<TEntity?> GetAsync(int id)
     {
-        throw new NotImplementedException();
+        string tableName = GetTableName();
+        string keyColumn = GetKeyColumnName()!;
+        string keyProperty = GetKeyPropertyName()!;
+        string query = $"SELECT * FROM {tableName} WHERE {keyColumn} = '{id}'";
+
+        using var connection = new SQLiteConnection(ConnectionString);
+        return await connection.QuerySingleOrDefaultAsync<TEntity>(query);
     }
 
     public async Task<int> UpdateAsync(TEntity entity)
     {
-        throw new NotImplementedException();
+        string tableName = GetTableName();
+        string keyColumn = GetKeyColumnName()!;
+        string keyProperty = GetKeyPropertyName()!;
+
+        var query = new StringBuilder();
+        query.Append($"UPDATE {tableName} SET ");
+        foreach (var property in GetProperties(true))
+        {
+            var columnAttribute = property.GetCustomAttribute<Database.ColumnAttribute>();
+            query.Append($"{columnAttribute!.Name} = @{property.Name},");
+        }
+        query.Remove(query.Length - 1, 1);
+
+        query.Append($"WHERE {keyColumn} = @{keyProperty}");
+
+        using var connection = new SQLiteConnection(ConnectionString);
+        return await connection.ExecuteAsync(query.ToString(), entity);
     }
 
     #endregion
     #region Methods - Private
-        
+
     private string GetTableName()
     {
         var type = typeof(TEntity);
-        var tableAttribute = type.GetCustomAttribute<TableAttribute>();
+        var tableAttribute = type.GetCustomAttribute<Database.TableAttribute>();
         return tableAttribute is null ? type.Name : tableAttribute.Name;
     }
 
@@ -120,15 +135,15 @@ public class DapperRepository<TEntity> : IRepository<TEntity> where TEntity : cl
 
         foreach (PropertyInfo property in properties)
         {
-            object[] keyAttributes = property.GetCustomAttributes(typeof(KeyAttribute), true);
+            object[] keyAttributes = property.GetCustomAttributes(typeof(Database.PrimaryKeyAttribute), true);
 
             if (keyAttributes != null && keyAttributes.Length > 0)
             {
-                object[] columnAttributes = property.GetCustomAttributes(typeof(ColumnAttribute), true);
+                object[] columnAttributes = property.GetCustomAttributes(typeof(Database.ColumnAttribute), true);
 
                 if (columnAttributes != null && columnAttributes.Length > 0)
                 {
-                    ColumnAttribute columnAttribute = (ColumnAttribute)columnAttributes[0];
+                    Database.ColumnAttribute columnAttribute = (Database.ColumnAttribute)columnAttributes[0];
                     return columnAttribute.Name;
                 }
                 else
@@ -141,15 +156,14 @@ public class DapperRepository<TEntity> : IRepository<TEntity> where TEntity : cl
         return null;
     }
 
-
     private string GetColumns(bool excludeKey = false)
     {
         var type = typeof(TEntity);
         var columns = string.Join(", ", type.GetProperties()
-            .Where(p => !excludeKey || !p.IsDefined(typeof(KeyAttribute)))
+            .Where(p => !excludeKey || !p.IsDefined(typeof(Database.PrimaryKeyAttribute)))
             .Select(p =>
             {
-                var columnAttr = p.GetCustomAttribute<ColumnAttribute>();
+                var columnAttr = p.GetCustomAttribute<Database.ColumnAttribute>();
                 return columnAttr != null ? columnAttr.Name : p.Name;
             }));
 
@@ -159,7 +173,7 @@ public class DapperRepository<TEntity> : IRepository<TEntity> where TEntity : cl
     protected string GetPropertyNames(bool excludeKey = false)
     {
         var properties = typeof(TEntity).GetProperties()
-            .Where(p => !excludeKey || p.GetCustomAttribute<KeyAttribute>() == null);
+            .Where(p => !excludeKey || p.GetCustomAttribute<Database.PrimaryKeyAttribute>() == null);
 
         var values = string.Join(", ", properties.Select(p =>
         {
@@ -168,26 +182,11 @@ public class DapperRepository<TEntity> : IRepository<TEntity> where TEntity : cl
 
         return values;
     }
-
-    protected string GetPropertyValues()
-    {
-        var properties = typeof(TEntity).GetProperties();
-            //.Where(p => !excludeKey || p.GetCustomAttribute<KeyAttribute>() == null);
-
-
-
-        var values = string.Join(", ", properties.Select(p =>
-        {
-            return $"@{p.Name}";
-        }));
-
-        return values;
-    }
-
+        
     protected IEnumerable<PropertyInfo> GetProperties(bool excludeKey = false)
     {
         var properties = typeof(TEntity).GetProperties()
-            .Where(p => !excludeKey || p.GetCustomAttribute<KeyAttribute>() == null);
+            .Where(p => !excludeKey || p.GetCustomAttribute<Database.PrimaryKeyAttribute>() == null);
 
         return properties;
     }
@@ -195,7 +194,7 @@ public class DapperRepository<TEntity> : IRepository<TEntity> where TEntity : cl
     protected string? GetKeyPropertyName()
     {
         var properties = typeof(TEntity).GetProperties()
-            .Where(p => p.GetCustomAttribute<KeyAttribute>() != null);
+            .Where(p => p.GetCustomAttribute<Database.PrimaryKeyAttribute>() != null);
 
         if (properties.Any())
         {

@@ -9,6 +9,8 @@ public class DataItemEntity
     #region Properties
 
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
     public int Id { get; set; }
 
     public int DataKeyId { get; set; }

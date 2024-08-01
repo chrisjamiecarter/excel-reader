@@ -1,6 +1,4 @@
-﻿using ExcelReader.Services.Extensions;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using Serilog;
 
 namespace ExcelReader.ConsoleApp.Installers;
@@ -14,12 +12,13 @@ public static class IHostBuilderExtensions
     /// Gets the installers for this application and performs the InstallServices method on each.
     /// </summary>
     /// <param name="builder">The IHostBuilder.</param>
-    public static void InstallServices(this IHostBuilder builder)
+    public static void AddDependancies(this IHostBuilder builder)
     {
         builder.ConfigureServices((hostContext, services) =>
         {
-            services.AddHostedService<App>();
             services.RegisterServices();
+            
+            // Configure Logging.
             services.AddSerilog((service, config) => config.ReadFrom.Configuration(hostContext.Configuration).Enrich.FromLogContext().WriteTo.Console());
         });
     }

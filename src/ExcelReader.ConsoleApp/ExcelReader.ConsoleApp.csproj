@@ -32,7 +32,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ExcelReader.Data\ExcelReader.Data.csproj" />
-    <ProjectReference Include="..\ExcelReader.Services\ExcelReader.Services.csproj" />
     <ProjectReference Include="..\ExcelReader\ExcelReader.csproj" />
   </ItemGroup>
 

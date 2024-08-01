@@ -1,6 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using ExcelReader.Models;
+﻿using ExcelReader.Models;
+using SQLite;
 
 namespace ExcelReader.Data.Entities;
 
@@ -9,15 +8,21 @@ public class DataFileEntity
 {
     #region Properties
 
-    [Key]
+    [PrimaryKey]
+    [NotNull]
+    [AutoIncrement]
     public int Id { get; set; }
 
+    [NotNull]
     public string DirectoryPath { get; set; }
-    
+
+    [NotNull]
     public string Name { get; set; }
 
+    [NotNull]
     public string Extension { get; set; }
 
+    [NotNull]
     public long Size { get; set; }
 
     #endregion

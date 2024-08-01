@@ -1,5 +1,4 @@
-﻿using ExcelReader.Data.Entities;
-using ExcelReader.Data.Repositories;
+﻿using ExcelReader.ConsoleApp.Controllers;
 using ExcelReader.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -15,17 +14,17 @@ internal class App : IHostedService
 
     private readonly IHostApplicationLifetime _appLifetime;
     private readonly ILogger<App> _logger;
-    private readonly IDataFileRepository _dataFileRepository;
+    private readonly IDataFileController _dataFileController;
     private int? _exitCode;
 
     #endregion
     #region Constructors
 
-    public App(IHostApplicationLifetime appLifetime, ILogger<App> logger, IDataFileRepository dataFileRepository)
+    public App(IHostApplicationLifetime appLifetime, ILogger<App> logger, IDataFileController dataFileController)
     {
         _appLifetime = appLifetime;
         _logger = logger;
-        _dataFileRepository = dataFileRepository;
+        _dataFileController = dataFileController;
     }
 
     #endregion
@@ -38,18 +37,42 @@ internal class App : IHostedService
             {
                 try
                 {
-                    var dataFile = new DataFileEntity
+                    var dataFile1 = new DataFile
                     {
-                        Id = 0,
+                        Id = 1,
                         DirectoryPath = "TEST_DirectoryPath",
                         Name = "TEST_Name",
                         Extension = ".test",
                         Size = 12345
                     };
-                    _logger.LogInformation("Creating = {dataFile}", dataFile);
-                    var created = await _dataFileRepository.AddAsync(dataFile);
-                    _logger.LogInformation("Result = {isCreated}", created > 0);
-                                        
+                    _logger.LogInformation("Creating = {dataFile}", dataFile1);
+                    var created = await _dataFileController.CreateAsync(dataFile1);
+                    _logger.LogInformation("Result = {isCreated}", created);
+
+                    _logger.LogInformation("Getting = {dataFile}", dataFile1);
+                    var returned = await _dataFileController.GetAsync(dataFile1.Id);
+                    _logger.LogInformation("Result = {returned}", returned);
+
+                    _logger.LogInformation("Deleting = {dataFile}", dataFile1);
+                    var deleted = await _dataFileController.DeleteAsync(dataFile1);
+                    _logger.LogInformation("Result = {isDeleted}", deleted);
+
+                    _logger.LogInformation("Getting = {dataFile}", dataFile1);
+                    returned = await _dataFileController.GetAsync(dataFile1.Id);
+                    _logger.LogInformation("Result = {returned}", returned);
+
+                    var dataFile2 = new DataFile
+                    {
+                        Id = 2,
+                        DirectoryPath = "TEST_DirectoryPath2",
+                        Name = "TEST_Name2",
+                        Extension = ".test2",
+                        Size = 12345
+                    };
+                    _logger.LogInformation("Creating = {dataFile}", dataFile2);
+                    created = await _dataFileController.CreateAsync(dataFile2);
+                    _logger.LogInformation("Result = {isCreated}", created);
+
                     _logger.LogInformation("Press any key to continue...");
                     Console.ReadKey();
                     _exitCode = 0;

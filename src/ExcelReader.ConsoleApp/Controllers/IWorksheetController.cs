@@ -7,5 +7,6 @@ public interface IWorksheetController
     Task<bool> DeleteAsync(Worksheet worksheet);
     Task<IReadOnlyList<Worksheet>> GetAsync();
     Task<Worksheet?> GetAsync(int id);
+    Task<IReadOnlyList<Worksheet>> GetByWorkbookIdAsync(int workbookId);
     Task<bool> UpdateAsync(Worksheet worksheet);
 }

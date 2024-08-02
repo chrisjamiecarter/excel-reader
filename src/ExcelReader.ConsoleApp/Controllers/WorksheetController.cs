@@ -37,6 +37,12 @@ public class WorksheetController : IWorksheetController
         return output is null ? null : WorksheetEntity.MapTo(output);
     }
 
+    public async Task<IReadOnlyList<Worksheet>> GetByWorkbookIdAsync(int workbookId)
+    {
+        var output = await _unitOfWork.Worksheets.GetByWorkbookIdAsync(workbookId);
+        return output.Select(WorksheetEntity.MapTo).ToList();
+    }
+
     public async Task<bool> UpdateAsync(Worksheet worksheet)
     {
         var entity = WorksheetEntity.MapFrom(worksheet);

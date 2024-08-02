@@ -16,22 +16,13 @@ public class SqliteRepository<TEntity> : IRepository<TEntity> where TEntity : cl
     private readonly string _databaseExtension = ".db";
 
     #endregion
-    #region Constructors
-
-    public SqliteRepository()
-    {
-        //EnsureDeleted();
-        //EnsureCreated();
-    }
-
-    #endregion
     #region Properties
 
-    private string ConnectionString => $"Data Source={FileName}";
+    public string ConnectionString => $"Data Source={FileName}";
 
-    private string FileName => Path.ChangeExtension(_databaseName, _databaseExtension);
+    public string FileName => Path.ChangeExtension(_databaseName, _databaseExtension);
 
-    private string FilePath => Path.GetFullPath(FileName);
+    public string FilePath => Path.GetFullPath(FileName);
 
     #endregion
     #region Methods - Public
@@ -75,21 +66,7 @@ public class SqliteRepository<TEntity> : IRepository<TEntity> where TEntity : cl
         using var connection = new SQLiteConnection(ConnectionString);
         return await connection.ExecuteAsync(query, entity);
     }
-
-    //public void EnsureCreated()
-    //{
-    //    using var connection = new SQLiteConnection(ConnectionString);
-    //    connection.Open();
-    //}
-
-    //public void EnsureDeleted()
-    //{
-    //    if (File.Exists(FilePath))
-    //    {
-    //        File.Delete(FilePath);
-    //    }
-    //}
-
+        
     public async Task<IEnumerable<TEntity>> GetAsync()
     {
         string tableName = GetTableName();

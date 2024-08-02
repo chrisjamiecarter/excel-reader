@@ -2,5 +2,10 @@
 
 public interface IUnitOfWork
 {
-    IDataFileRepository DataFiles { get; }
+    IWorkbookRepository Workbooks { get; }
+    IWorksheetRepository Worksheets { get; }
+    ISqliteDatabaseRepository Database { get; }
+    IColumnRepository Columns { get; }
+    IRowRepository Rows { get; }
+    ICellRepository Cells { get; }
 }

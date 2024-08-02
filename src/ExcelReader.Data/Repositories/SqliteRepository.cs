@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using System.Data.Common;
 using System.Data.SQLite;
 using System.Reflection;
 using System.Text;
@@ -21,8 +20,8 @@ public class SqliteRepository<TEntity> : IRepository<TEntity> where TEntity : cl
 
     public SqliteRepository()
     {
-        EnsureDeleted();
-        EnsureCreated();
+        //EnsureDeleted();
+        //EnsureCreated();
     }
 
     #endregion
@@ -44,7 +43,6 @@ public class SqliteRepository<TEntity> : IRepository<TEntity> where TEntity : cl
         return result is Database.CreateTableResult.Created;
     }
 
-
     public async Task<int> AddAsync(TEntity entity)
     {
         string tableName = GetTableName();
@@ -54,6 +52,17 @@ public class SqliteRepository<TEntity> : IRepository<TEntity> where TEntity : cl
 
         using var connection = new SQLiteConnection(ConnectionString);
         return await connection.ExecuteAsync(query, entity);
+    }
+
+    public async Task<int> AddAndGetIdAsync(TEntity entity)
+    {
+        string tableName = GetTableName();
+        string columns = GetColumns(true);
+        string properties = GetPropertyNames(true);
+        string query = $"INSERT INTO {tableName} ({columns}) VALUES ({properties}); SELECT last_insert_rowid();";
+
+        using var connection = new SQLiteConnection(ConnectionString);
+        return await connection.ExecuteScalarAsync<int>(query, entity);
     }
 
     public async Task<int> DeleteAsync(TEntity entity)
@@ -67,19 +76,19 @@ public class SqliteRepository<TEntity> : IRepository<TEntity> where TEntity : cl
         return await connection.ExecuteAsync(query, entity);
     }
 
-    public void EnsureCreated()
-    {
-        using var connection = new SQLiteConnection(ConnectionString);
-        connection.Open();
-    }
+    //public void EnsureCreated()
+    //{
+    //    using var connection = new SQLiteConnection(ConnectionString);
+    //    connection.Open();
+    //}
 
-    public void EnsureDeleted()
-    {
-        if (File.Exists(FilePath))
-        {
-            File.Delete(FilePath);
-        }
-    }
+    //public void EnsureDeleted()
+    //{
+    //    if (File.Exists(FilePath))
+    //    {
+    //        File.Delete(FilePath);
+    //    }
+    //}
 
     public async Task<IEnumerable<TEntity>> GetAsync()
     {

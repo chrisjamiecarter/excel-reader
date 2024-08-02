@@ -2,6 +2,6 @@
 
 namespace ExcelReader.Data.Repositories;
 
-public interface IDataFileRepository : IRepository<DataFileEntity>
+public interface IColumnRepository : IRepository<ColumnEntity>
 {
 }

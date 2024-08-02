@@ -10,11 +10,21 @@ public static class IServiceCollectionExtension
     {
         // App.
         services.AddHostedService<App>();
-        services.AddScoped<IDataFileController, DataFileController>();
+        services.AddScoped<IDatabaseController, DatabaseController>();
+        services.AddScoped<IWorkbookController, WorkbookController>();
+        services.AddScoped<IWorksheetController, WorksheetController>();
+        services.AddScoped<IColumnController, ColumnController>();
+        services.AddScoped<IRowController, RowController>();
+        services.AddScoped<ICellController, CellController>();
 
         // Data.
         services.AddSingleton(typeof(IRepository<>), typeof(SqliteRepository<>));
-        services.AddScoped<IDataFileRepository, DataFileRepository>();
+        services.AddScoped<ISqliteDatabaseRepository, SqliteDatabaseRepository>();
+        services.AddTransient<IWorkbookRepository, WorkbookRepository>();
+        services.AddTransient<IWorksheetRepository, WorksheetRepository>();
+        services.AddTransient<IColumnRepository, ColumnRepository>();
+        services.AddTransient<IRowRepository, RowRepository>();
+        services.AddTransient<ICellRepository, CellRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 }

@@ -37,6 +37,12 @@ public class CellController : ICellController
         return output is null ? null : CellEntity.MapTo(output);
     }
 
+    public async Task<IReadOnlyList<Cell>> GetByRowIdAsync(int rowId)
+    {
+        var output = await _unitOfWork.Cells.GetByRowIdAsync(rowId);
+        return output.Select(CellEntity.MapTo).ToList();
+    }
+
     public async Task<bool> UpdateAsync(Cell cell)
     {
         var entity = CellEntity.MapFrom(cell);

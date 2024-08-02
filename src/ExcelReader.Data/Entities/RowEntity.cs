@@ -1,5 +1,6 @@
 ﻿using ExcelReader.Models;
 using SQLite;
+using static Dapper.SqlMapper;
 
 namespace ExcelReader.Data.Entities;
 
@@ -29,6 +30,7 @@ public class RowEntity
         return new RowEntity
         {
             Id = row.Id,
+            WorksheetId = row.WorksheetId,
             Position = row.Position,
         };
     }

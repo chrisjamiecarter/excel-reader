@@ -37,6 +37,12 @@ public class ColumnController : IColumnController
         return output is null ? null : ColumnEntity.MapTo(output);
     }
 
+    public async Task<IReadOnlyList<Column>> GetByWorksheetIdAsync(int worksheetId)
+    {
+        var output = await _unitOfWork.Columns.GetByWorksheetIdAsync(worksheetId);
+        return output.Select(ColumnEntity.MapTo).ToList();
+    }
+
     public async Task<bool> UpdateAsync(Column column)
     {
         var entity = ColumnEntity.MapFrom(column);

@@ -37,6 +37,11 @@ public class RowController : IRowController
         return output is null ? null : RowEntity.MapTo(output);
     }
 
+    public async Task<IReadOnlyList<Row>> GetByWorksheetIdAsync(int worksheetId)
+    {
+        var output = await _unitOfWork.Rows.GetAsync();
+        return output.Select(RowEntity.MapTo).ToList();
+    }
     public async Task<bool> UpdateAsync(Row row)
     {
         var entity = RowEntity.MapFrom(row);

@@ -45,20 +45,20 @@ public class WorkbookEntity
         };
     }
 
-    public static Workbook MapTo(WorkbookEntity workbook)
+    public static Workbook MapTo(WorkbookEntity entity)
     {
-        ArgumentNullException.ThrowIfNull(workbook, nameof(workbook));
-        ArgumentException.ThrowIfNullOrWhiteSpace(workbook.DirectoryPath, nameof(workbook.DirectoryPath));
-        ArgumentException.ThrowIfNullOrWhiteSpace(workbook.Name, nameof(workbook.Name));
-        ArgumentException.ThrowIfNullOrWhiteSpace(workbook.Extension, nameof(workbook.Extension));
+        ArgumentNullException.ThrowIfNull(entity, nameof(entity));
+        ArgumentException.ThrowIfNullOrWhiteSpace(entity.DirectoryPath, nameof(entity.DirectoryPath));
+        ArgumentException.ThrowIfNullOrWhiteSpace(entity.Name, nameof(entity.Name));
+        ArgumentException.ThrowIfNullOrWhiteSpace(entity.Extension, nameof(entity.Extension));
 
         return new Workbook
         {
-            Id = workbook.Id,
-            DirectoryPath = workbook.DirectoryPath,
-            Name = workbook.Name,
-            Extension = workbook.Extension,
-            Size = workbook.Size
+            Id = entity.Id,
+            DirectoryPath = entity.DirectoryPath,
+            Name = entity.Name,
+            Extension = entity.Extension,
+            Size = entity.Size
         };
     }
 

@@ -33,21 +33,23 @@ public class WorksheetEntity
         return new WorksheetEntity
         {
             Id = worksheet.Id,
+            WorkbookId = worksheet.WorkbookId,
             Position = worksheet.Position,
             Name = worksheet.Name,
         };
     }
 
-    public static Worksheet MapTo(WorksheetEntity worksheet)
+    public static Worksheet MapTo(WorksheetEntity entity)
     {
-        ArgumentNullException.ThrowIfNull(worksheet, nameof(worksheet));
-        ArgumentException.ThrowIfNullOrWhiteSpace(worksheet.Name, nameof(worksheet.Name));
+        ArgumentNullException.ThrowIfNull(entity, nameof(entity));
+        ArgumentException.ThrowIfNullOrWhiteSpace(entity.Name, nameof(entity.Name));
         
         return new Worksheet
         {
-            Id = worksheet.Id,
-            Position = worksheet.Position,
-            Name = worksheet.Name,
+            Id = entity.Id,
+            WorkbookId = entity.WorkbookId,
+            Position = entity.Position,
+            Name = entity.Name,
         };
     }
 

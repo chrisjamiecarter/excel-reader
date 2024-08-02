@@ -36,23 +36,25 @@ public class CellEntity
         return new CellEntity
         {
             Id = cell.Id,
+            ColumnId = cell.ColumnId,
+            RowId = cell.RowId,
             Position = cell.Position,
             Value = cell.Value,
         };
     }
 
-    public static Cell MapTo(CellEntity cell)
+    public static Cell MapTo(CellEntity entity)
     {
-        ArgumentNullException.ThrowIfNull(cell, nameof(cell));
-        ArgumentNullException.ThrowIfNull(cell.Value, nameof(cell.Value));
+        ArgumentNullException.ThrowIfNull(entity, nameof(entity));
+        ArgumentNullException.ThrowIfNull(entity.Value, nameof(entity.Value));
 
         return new Cell
         {
-            Id = cell.Id,
-            ColumnId = cell.ColumnId,
-            RowId = cell.RowId,
-            Position = cell.Position,
-            Value = cell.Value,
+            Id = entity.Id,
+            ColumnId = entity.ColumnId,
+            RowId = entity.RowId,
+            Position = entity.Position,
+            Value = entity.Value,
         };
     }
 

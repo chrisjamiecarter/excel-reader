@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using ExcelReader.Configurations;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 
 namespace ExcelReader.ConsoleApp.Installers;
@@ -20,6 +23,9 @@ public static class IHostBuilderExtensions
             
             // Configure Logging.
             services.AddSerilog((service, config) => config.ReadFrom.Configuration(hostContext.Configuration).Enrich.FromLogContext().WriteTo.Console());
+
+            // Configure Options.
+            services.AddOptions<ApplicationOptions>().Bind(hostContext.Configuration.GetSection(nameof(ApplicationOptions)));
         });
     }
 }

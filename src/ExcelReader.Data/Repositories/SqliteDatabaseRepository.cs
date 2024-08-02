@@ -1,14 +1,14 @@
 ﻿using System.Data.SQLite;
+using ExcelReader.Configurations;
+using Microsoft.Extensions.Options;
 
 namespace ExcelReader.Data.Repositories;
 
 public class SqliteDatabaseRepository : ISqliteDatabaseRepository
 {
-    #region Constants
+    #region Fields
 
-    private readonly string _databaseName = "ExcelReader";
-
-    private readonly string _databaseExtension = ".db";
+    private readonly ApplicationOptions _options;
     private readonly IWorkbookRepository _workbookRepository;
     private readonly IWorksheetRepository _worksheetRepository;
     private readonly IColumnRepository _columnRepository;
@@ -19,12 +19,14 @@ public class SqliteDatabaseRepository : ISqliteDatabaseRepository
     #region Constructors
 
     public SqliteDatabaseRepository(
+        IOptions<ApplicationOptions> options,
         IWorkbookRepository workbookRepository, 
         IWorksheetRepository worksheetRepository,
         IColumnRepository columnRepository,
         IRowRepository rowRepository,
         ICellRepository cellRepository)
     {
+        _options = options.Value;
         _workbookRepository = workbookRepository;
         _worksheetRepository = worksheetRepository;
         _columnRepository = columnRepository;
@@ -37,7 +39,7 @@ public class SqliteDatabaseRepository : ISqliteDatabaseRepository
 
     private string ConnectionString => $"Data Source={FileName}";
 
-    private string FileName => Path.ChangeExtension(_databaseName, _databaseExtension);
+    private string FileName => Path.ChangeExtension(_options.DatabaseName, _options.DatabaseExtension);
 
     private string FilePath => Path.GetFullPath(FileName);
 
@@ -46,6 +48,8 @@ public class SqliteDatabaseRepository : ISqliteDatabaseRepository
 
     public void EnsureCreated()
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(nameof(FileName));
+        
         using var connection = new SQLiteConnection(ConnectionString);
         connection.Open();
         connection.Close();
@@ -59,6 +63,8 @@ public class SqliteDatabaseRepository : ISqliteDatabaseRepository
 
     public void EnsureDeleted()
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(nameof(FileName));
+
         if (File.Exists(FilePath))
         {
             File.Delete(FilePath);

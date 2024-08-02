@@ -1,9 +1,11 @@
-﻿using ExcelReader.ConsoleApp.Controllers;
+﻿using ExcelReader.Configurations;
+using ExcelReader.ConsoleApp.Controllers;
 using ExcelReader.ConsoleApp.Engines;
 using ExcelReader.Models;
 using ExcelReader.Services;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Spectre.Console;
 
 namespace ExcelReader.ConsoleApp;
@@ -17,6 +19,7 @@ internal class App : IHostedService
 
     private readonly IHostApplicationLifetime _appLifetime;
     private readonly ILogger<App> _logger;
+    private readonly ApplicationOptions _options;
     private readonly IDatabaseController _databaseController;
     private readonly IWorkbookController _workbookController;
     private readonly IWorksheetController _worksheetController;
@@ -28,10 +31,12 @@ internal class App : IHostedService
     #endregion
     #region Constructors
 
-    public App(IHostApplicationLifetime appLifetime, 
-        ILogger<App> logger, 
-        IDatabaseController databaseController, 
-        IWorkbookController workbookController, 
+    public App(
+        IHostApplicationLifetime appLifetime,
+        ILogger<App> logger,
+        IOptions<ApplicationOptions> options,
+        IDatabaseController databaseController,
+        IWorkbookController workbookController,
         IWorksheetController worksheetController,
         IColumnController columnController,
         IRowController rowController,
@@ -39,14 +44,43 @@ internal class App : IHostedService
     {
         _appLifetime = appLifetime;
         _logger = logger;
+        _options = options.Value;
         _databaseController = databaseController;
         _workbookController = workbookController;
         _worksheetController = worksheetController;
         _columnController = columnController;
         _rowController = rowController;
         _cellController = cellController;
+
+        if (!Directory.Exists(DoneDirectoryPath))
+        {
+            Directory.CreateDirectory(DoneDirectoryPath);
+        }
+        if (!Directory.Exists(ErrorDirectoryPath))
+        {
+            Directory.CreateDirectory(ErrorDirectoryPath);
+        }
+        if (!Directory.Exists(IncomingDirectoryPath))
+        {
+            Directory.CreateDirectory(IncomingDirectoryPath);
+        }
+        if (!Directory.Exists(ProcessingDirectoryPath))
+        {
+            Directory.CreateDirectory(ProcessingDirectoryPath);
+        }
     }
 
+    #endregion
+    #region Properties
+
+    private string DoneDirectoryPath => Path.GetFullPath(Path.Combine(_options.WorkingDirectoryPath, Constants.DoneDirectoryName));
+
+    private string ErrorDirectoryPath => Path.GetFullPath(Path.Combine(_options.WorkingDirectoryPath, Constants.ErrorDirectoryName));
+
+    private string IncomingDirectoryPath => Path.GetFullPath(Path.Combine(_options.WorkingDirectoryPath, Constants.IncomingDirectoryName));
+    
+    private string ProcessingDirectoryPath => Path.GetFullPath(Path.Combine(_options.WorkingDirectoryPath, Constants.ProcessingDirectoryName));
+    
     #endregion
     #region Methods
     public Task StartAsync(CancellationToken cancellationToken)
@@ -62,27 +96,43 @@ internal class App : IHostedService
                     _logger.LogInformation("Resetting database");
                     _databaseController.Reset();
                     _logger.LogInformation("Database reset");
+                                        
+                    List<Workbook> readWorkbooks = [];
+                    _logger.LogInformation("Processing incoming directory {directory}", IncomingDirectoryPath);
+                    foreach (var fileInfo in new DirectoryInfo(IncomingDirectoryPath).EnumerateFiles())
+                    {
+                        _logger.LogInformation("Processing file {file}", fileInfo.Name);
 
-                    var inputFilePath = Path.GetFullPath("..\\..\\..\\..\\..\\_test\\Incoming\\");
-                    var reader = new ExcelReaderService();
+                        fileInfo.MoveTo(Path.Combine(ProcessingDirectoryPath, fileInfo.Name), true);
 
-                    _logger.LogInformation("Processing incoming directory {directory}", inputFilePath);
-                    var workbooks = reader.Process(inputFilePath);
+                        try
+                        {
+                            readWorkbooks.Add(ExcelReaderService.GenerateWorkbookFromFile(fileInfo));
+                            
+                            fileInfo.MoveTo(Path.Combine(DoneDirectoryPath, fileInfo.Name), true);
+
+                            _logger.LogInformation("File processed");
+                        }
+                        catch (Exception exception)
+                        {
+                            _logger.LogWarning("Error procesing file {message}", exception.Message);
+                            
+                            fileInfo.MoveTo(Path.Combine(ErrorDirectoryPath, fileInfo.Name), true);
+
+                            _logger.LogInformation("File aborted");
+                        }
+                    }
                     _logger.LogInformation("Incoming directory processed");
 
                     _logger.LogInformation("Adding data to database");
-                    _logger.LogInformation("Workbooks: {count}", workbooks.Count);
-                    _logger.LogInformation("Worksheets: {count}", workbooks.Sum(x => x.Worksheets.Count));
-                    _logger.LogInformation("Columns: {count}", workbooks.Sum(x => x.Worksheets.Sum(y => y.Columns.Count)));
-                    _logger.LogInformation("Rows: {count}", workbooks.Sum(x => x.Worksheets.Sum(y => y.Rows.Count)));
-                    foreach (var workbook in workbooks)
+                    foreach (var workbook in readWorkbooks)
                     {
                         workbook.Id = await _workbookController.CreateAsync(workbook);
                         foreach (var worksheet in workbook.Worksheets)
                         {
                             worksheet.WorkbookId = workbook.Id;
                             worksheet.Id = await _worksheetController.CreateAsync(worksheet);
-                            foreach(var column in worksheet.Columns)
+                            foreach (var column in worksheet.Columns)
                             {
                                 column.WorksheetId = worksheet.Id;
                                 column.Id = await _columnController.CreateAsync(column);
@@ -91,7 +141,7 @@ internal class App : IHostedService
                             {
                                 row.WorksheetId = worksheet.Id;
                                 row.Id = await _rowController.CreateAsync(row);
-                                foreach (var cell in  row.Cells)
+                                foreach (var cell in row.Cells)
                                 {
                                     cell.ColumnId = worksheet.Columns.First(x => x.Position == cell.Position).Id;
                                     cell.RowId = row.Id;
@@ -107,7 +157,7 @@ internal class App : IHostedService
                     foreach (var dbWorkbook in dbWorkbooks)
                     {
                         dbWorkbook.Worksheets.AddRange(await _worksheetController.GetByWorkbookIdAsync(dbWorkbook.Id));
-                        
+
                         foreach (var dbWorksheet in dbWorkbook.Worksheets)
                         {
                             dbWorksheet.Columns.AddRange(await _columnController.GetByWorksheetIdAsync(dbWorksheet.Id));
@@ -124,7 +174,7 @@ internal class App : IHostedService
                     _logger.LogInformation("Generating tables");
                     foreach (var workbook in dbWorkbooks)
                     {
-                        foreach(var worksheet in workbook.Worksheets)
+                        foreach (var worksheet in workbook.Worksheets)
                         {
                             var table = TableEngine.GetTable(worksheet);
                             AnsiConsole.Write(table);

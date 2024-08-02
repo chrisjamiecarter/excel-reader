@@ -39,7 +39,7 @@ public class RowController : IRowController
 
     public async Task<IReadOnlyList<Row>> GetByWorksheetIdAsync(int worksheetId)
     {
-        var output = await _unitOfWork.Rows.GetAsync();
+        var output = await _unitOfWork.Rows.GetByWorksheetIdAsync(worksheetId);
         return output.Select(RowEntity.MapTo).ToList();
     }
     public async Task<bool> UpdateAsync(Row row)

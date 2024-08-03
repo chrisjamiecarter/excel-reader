@@ -26,7 +26,7 @@ public class ColumnEntity
     #endregion
     #region Methods
 
-    public static ColumnEntity MapFrom(Column column)
+    public static ColumnEntity MapFrom(DataField column)
     {
         ArgumentNullException.ThrowIfNull(column, nameof(column));
         ArgumentNullException.ThrowIfNull(column.Name, nameof(column.Name));
@@ -34,21 +34,21 @@ public class ColumnEntity
         return new ColumnEntity
         {
             Id = column.Id,
-            WorksheetId = column.WorksheetId,
+            WorksheetId = column.DataSheetId,
             Position = column.Position,
             Name = column.Name,
         };
     }
 
-    public static Column MapTo(ColumnEntity entity)
+    public static DataField MapTo(ColumnEntity entity)
     {
         ArgumentNullException.ThrowIfNull(entity, nameof(entity));
         ArgumentNullException.ThrowIfNull(entity.Name, nameof(entity.Name));
 
-        return new Column
+        return new DataField
         {
             Id = entity.Id,
-            WorksheetId = entity.WorksheetId,
+            DataSheetId = entity.WorksheetId,
             Position = entity.Position,
             Name = entity.Name,
         };

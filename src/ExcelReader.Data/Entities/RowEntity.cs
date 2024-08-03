@@ -23,26 +23,26 @@ public class RowEntity
     #endregion
     #region Methods
 
-    public static RowEntity MapFrom(Row row)
+    public static RowEntity MapFrom(DataRow row)
     {
         ArgumentNullException.ThrowIfNull(row, nameof(row));
         
         return new RowEntity
         {
             Id = row.Id,
-            WorksheetId = row.WorksheetId,
+            WorksheetId = row.DataSheetId,
             Position = row.Position,
         };
     }
 
-    public static Row MapTo(RowEntity entity)
+    public static DataRow MapTo(RowEntity entity)
     {
         ArgumentNullException.ThrowIfNull(entity, nameof(entity));
         
-        return new Row
+        return new DataRow
         {
             Id = entity.Id,
-            WorksheetId = entity.WorksheetId,
+            DataSheetId = entity.WorksheetId,
             Position = entity.Position,
         };
     }

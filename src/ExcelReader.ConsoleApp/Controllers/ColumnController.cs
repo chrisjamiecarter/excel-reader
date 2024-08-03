@@ -18,32 +18,32 @@ public class ColumnController : IColumnController
     /// </summary>
     /// <param name="column">The Column to create in the Repository.</param>
     /// <returns>The ID of the created entity.</returns>
-    public async Task<int> CreateAsync(Column column)
+    public async Task<int> CreateAsync(DataField column)
     {
         var entity = ColumnEntity.MapFrom(column);
 
         return await _unitOfWork.Columns.AddAndGetIdAsync(entity);
     }
 
-    public async Task<IReadOnlyList<Column>> GetAsync()
+    public async Task<IReadOnlyList<DataField>> GetAsync()
     {
         var output = await _unitOfWork.Columns.GetAsync();
         return output.Select(ColumnEntity.MapTo).ToList();
     }
 
-    public async Task<Column?> GetAsync(int id)
+    public async Task<DataField?> GetAsync(int id)
     {
         var output = await _unitOfWork.Columns.GetAsync(id);
         return output is null ? null : ColumnEntity.MapTo(output);
     }
 
-    public async Task<IReadOnlyList<Column>> GetByWorksheetIdAsync(int worksheetId)
+    public async Task<IReadOnlyList<DataField>> GetByWorksheetIdAsync(int worksheetId)
     {
         var output = await _unitOfWork.Columns.GetByWorksheetIdAsync(worksheetId);
         return output.Select(ColumnEntity.MapTo).ToList();
     }
 
-    public async Task<bool> UpdateAsync(Column column)
+    public async Task<bool> UpdateAsync(DataField column)
     {
         var entity = ColumnEntity.MapFrom(column);
 
@@ -52,7 +52,7 @@ public class ColumnController : IColumnController
         return result > 0;
     }
 
-    public async Task<bool> DeleteAsync(Column column)
+    public async Task<bool> DeleteAsync(DataField column)
     {
         var entity = ColumnEntity.MapFrom(column);
 

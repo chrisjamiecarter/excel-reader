@@ -18,32 +18,32 @@ public class WorksheetController : IWorksheetController
     /// </summary>
     /// <param name="worksheet">The Worksheet to create in the Repository.</param>
     /// <returns>The ID of the created entity.</returns>
-    public async Task<int> CreateAsync(Worksheet worksheet)
+    public async Task<int> CreateAsync(DataSheet worksheet)
     {
         var entity = WorksheetEntity.MapFrom(worksheet);
 
         return await _unitOfWork.Worksheets.AddAndGetIdAsync(entity);
     }
 
-    public async Task<IReadOnlyList<Worksheet>> GetAsync()
+    public async Task<IReadOnlyList<DataSheet>> GetAsync()
     {
         var output = await _unitOfWork.Worksheets.GetAsync();
         return output.Select(WorksheetEntity.MapTo).ToList();
     }
 
-    public async Task<Worksheet?> GetAsync(int id)
+    public async Task<DataSheet?> GetAsync(int id)
     {
         var output = await _unitOfWork.Worksheets.GetAsync(id);
         return output is null ? null : WorksheetEntity.MapTo(output);
     }
 
-    public async Task<IReadOnlyList<Worksheet>> GetByWorkbookIdAsync(int workbookId)
+    public async Task<IReadOnlyList<DataSheet>> GetByWorkbookIdAsync(int workbookId)
     {
         var output = await _unitOfWork.Worksheets.GetByWorkbookIdAsync(workbookId);
         return output.Select(WorksheetEntity.MapTo).ToList();
     }
 
-    public async Task<bool> UpdateAsync(Worksheet worksheet)
+    public async Task<bool> UpdateAsync(DataSheet worksheet)
     {
         var entity = WorksheetEntity.MapFrom(worksheet);
 
@@ -52,7 +52,7 @@ public class WorksheetController : IWorksheetController
         return result > 0;
     }
 
-    public async Task<bool> DeleteAsync(Worksheet worksheet)
+    public async Task<bool> DeleteAsync(DataSheet worksheet)
     {
         var entity = WorksheetEntity.MapFrom(worksheet);
 

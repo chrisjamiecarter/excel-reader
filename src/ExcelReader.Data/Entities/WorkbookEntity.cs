@@ -25,7 +25,7 @@ public class WorkbookEntity
     #endregion
     #region Methods
 
-    public static WorkbookEntity MapFrom(Workbook workbook)
+    public static WorkbookEntity MapFrom(DataFile workbook)
     {
         ArgumentNullException.ThrowIfNull(workbook, nameof(workbook));
         ArgumentException.ThrowIfNullOrWhiteSpace(workbook.Name, nameof(workbook.Name));
@@ -40,13 +40,13 @@ public class WorkbookEntity
         };
     }
 
-    public static Workbook MapTo(WorkbookEntity entity)
+    public static DataFile MapTo(WorkbookEntity entity)
     {
         ArgumentNullException.ThrowIfNull(entity, nameof(entity));
         ArgumentException.ThrowIfNullOrWhiteSpace(entity.Name, nameof(entity.Name));
         ArgumentException.ThrowIfNullOrWhiteSpace(entity.Extension, nameof(entity.Extension));
 
-        return new Workbook
+        return new DataFile
         {
             Id = entity.Id,
             Name = entity.Name,

@@ -28,7 +28,7 @@ public class CellEntity
     #endregion
     #region Methods
 
-    public static CellEntity MapFrom(Cell cell)
+    public static CellEntity MapFrom(DataItem cell)
     {
         ArgumentNullException.ThrowIfNull(cell, nameof(cell));
         ArgumentNullException.ThrowIfNull(cell.Value, nameof(cell.Value));
@@ -36,23 +36,23 @@ public class CellEntity
         return new CellEntity
         {
             Id = cell.Id,
-            ColumnId = cell.ColumnId,
-            RowId = cell.RowId,
+            ColumnId = cell.DataFieldId,
+            RowId = cell.DataRowId,
             Position = cell.Position,
             Value = cell.Value,
         };
     }
 
-    public static Cell MapTo(CellEntity entity)
+    public static DataItem MapTo(CellEntity entity)
     {
         ArgumentNullException.ThrowIfNull(entity, nameof(entity));
         ArgumentNullException.ThrowIfNull(entity.Value, nameof(entity.Value));
 
-        return new Cell
+        return new DataItem
         {
             Id = entity.Id,
-            ColumnId = entity.ColumnId,
-            RowId = entity.RowId,
+            DataFieldId = entity.ColumnId,
+            DataRowId = entity.RowId,
             Position = entity.Position,
             Value = entity.Value,
         };

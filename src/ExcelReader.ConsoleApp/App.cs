@@ -1,6 +1,7 @@
 ﻿using ExcelReader.Configurations;
 using ExcelReader.ConsoleApp.Controllers;
 using ExcelReader.ConsoleApp.Engines;
+using ExcelReader.Constants;
 using ExcelReader.Models;
 using ExcelReader.Services;
 using Microsoft.Extensions.Hosting;
@@ -26,6 +27,7 @@ internal class App : IHostedService
     private readonly IColumnController _columnController;
     private readonly IRowController _rowController;
     private readonly ICellController _cellController;
+    private readonly IDataFileProcessor _dataFileProcessor;
     private int? _exitCode;
 
     #endregion
@@ -40,7 +42,8 @@ internal class App : IHostedService
         IWorksheetController worksheetController,
         IColumnController columnController,
         IRowController rowController,
-        ICellController cellController)
+        ICellController cellController,
+        IDataFileProcessor dataFileProcessor)
     {
         _appLifetime = appLifetime;
         _logger = logger;
@@ -51,38 +54,23 @@ internal class App : IHostedService
         _columnController = columnController;
         _rowController = rowController;
         _cellController = cellController;
-
-        if (!Directory.Exists(DoneDirectoryPath))
-        {
-            Directory.CreateDirectory(DoneDirectoryPath);
-        }
-        if (!Directory.Exists(ErrorDirectoryPath))
-        {
-            Directory.CreateDirectory(ErrorDirectoryPath);
-        }
-        if (!Directory.Exists(IncomingDirectoryPath))
-        {
-            Directory.CreateDirectory(IncomingDirectoryPath);
-        }
-        if (!Directory.Exists(ProcessingDirectoryPath))
-        {
-            Directory.CreateDirectory(ProcessingDirectoryPath);
-        }
+        _dataFileProcessor = dataFileProcessor;
     }
 
     #endregion
     #region Properties
 
-    private string DoneDirectoryPath => Path.GetFullPath(Path.Combine(_options.WorkingDirectoryPath, Constants.DoneDirectoryName));
+    private string DoneDirectoryPath => Path.GetFullPath(Path.Combine(_options.WorkingDirectoryPath, DirectoryName.Done));
 
-    private string ErrorDirectoryPath => Path.GetFullPath(Path.Combine(_options.WorkingDirectoryPath, Constants.ErrorDirectoryName));
+    private string ErrorDirectoryPath => Path.GetFullPath(Path.Combine(_options.WorkingDirectoryPath, DirectoryName.Error));
 
-    private string IncomingDirectoryPath => Path.GetFullPath(Path.Combine(_options.WorkingDirectoryPath, Constants.IncomingDirectoryName));
+    private string IncomingDirectoryPath => Path.GetFullPath(Path.Combine(_options.WorkingDirectoryPath, DirectoryName.Incoming));
     
-    private string ProcessingDirectoryPath => Path.GetFullPath(Path.Combine(_options.WorkingDirectoryPath, Constants.ProcessingDirectoryName));
+    private string ProcessingDirectoryPath => Path.GetFullPath(Path.Combine(_options.WorkingDirectoryPath, DirectoryName.Processing));
     
     #endregion
-    #region Methods
+    #region Methods - Public
+
     public Task StartAsync(CancellationToken cancellationToken)
     {
         _appLifetime.ApplicationStarted.Register(() =>
@@ -93,11 +81,16 @@ internal class App : IHostedService
                 {
                     _logger.LogInformation("Application started");
 
+                    // Configure working directory.
+                    ConfigureWorkingDirectory();
+
+                    // Configure database.
                     _logger.LogInformation("Resetting database");
                     _databaseController.Reset();
                     _logger.LogInformation("Database reset");
-                                        
-                    List<Workbook> readWorkbooks = [];
+
+                    // Process incoming files.
+                    List<DataFile> incomingDataFiles = [];
                     _logger.LogInformation("Processing incoming directory {directory}", IncomingDirectoryPath);
                     foreach (var fileInfo in new DirectoryInfo(IncomingDirectoryPath).EnumerateFiles())
                     {
@@ -107,8 +100,8 @@ internal class App : IHostedService
 
                         try
                         {
-                            readWorkbooks.Add(ExcelReaderService.GenerateWorkbookFromFile(fileInfo));
-                            
+                            incomingDataFiles.Add(_dataFileProcessor.ProcessFile(fileInfo));
+
                             fileInfo.MoveTo(Path.Combine(DoneDirectoryPath, fileInfo.Name), true);
 
                             _logger.LogInformation("File processed");
@@ -116,7 +109,7 @@ internal class App : IHostedService
                         catch (Exception exception)
                         {
                             _logger.LogWarning("Error procesing file {message}", exception.Message);
-                            
+
                             fileInfo.MoveTo(Path.Combine(ErrorDirectoryPath, fileInfo.Name), true);
 
                             _logger.LogInformation("File aborted");
@@ -124,27 +117,30 @@ internal class App : IHostedService
                     }
                     _logger.LogInformation("Incoming directory processed");
 
+
+                    // Process database - ADD.
+
                     _logger.LogInformation("Adding data to database");
-                    foreach (var workbook in readWorkbooks)
+                    foreach (var workbook in incomingDataFiles)
                     {
                         workbook.Id = await _workbookController.CreateAsync(workbook);
-                        foreach (var worksheet in workbook.Worksheets)
+                        foreach (var worksheet in workbook.DataSheets)
                         {
-                            worksheet.WorkbookId = workbook.Id;
+                            worksheet.DataFileId = workbook.Id;
                             worksheet.Id = await _worksheetController.CreateAsync(worksheet);
-                            foreach (var column in worksheet.Columns)
+                            foreach (var column in worksheet.DataFields)
                             {
-                                column.WorksheetId = worksheet.Id;
+                                column.DataSheetId = worksheet.Id;
                                 column.Id = await _columnController.CreateAsync(column);
                             }
-                            foreach (var row in worksheet.Rows)
+                            foreach (var row in worksheet.DataRows)
                             {
-                                row.WorksheetId = worksheet.Id;
+                                row.DataSheetId = worksheet.Id;
                                 row.Id = await _rowController.CreateAsync(row);
-                                foreach (var cell in row.Cells)
+                                foreach (var cell in row.DataItems)
                                 {
-                                    cell.ColumnId = worksheet.Columns.First(x => x.Position == cell.Position).Id;
-                                    cell.RowId = row.Id;
+                                    cell.DataFieldId = worksheet.DataFields.First(x => x.Position == cell.Position).Id;
+                                    cell.DataRowId = row.Id;
                                     cell.Id = await _cellController.CreateAsync(cell);
                                 }
                             }
@@ -152,29 +148,33 @@ internal class App : IHostedService
                     }
                     _logger.LogInformation("Data added to database");
 
+                    // Process database - GET.
+
                     _logger.LogInformation("Retrieving data from database");
                     var dbWorkbooks = await _workbookController.GetAsync();
                     foreach (var dbWorkbook in dbWorkbooks)
                     {
-                        dbWorkbook.Worksheets.AddRange(await _worksheetController.GetByWorkbookIdAsync(dbWorkbook.Id));
+                        dbWorkbook.DataSheets.AddRange(await _worksheetController.GetByWorkbookIdAsync(dbWorkbook.Id));
 
-                        foreach (var dbWorksheet in dbWorkbook.Worksheets)
+                        foreach (var dbWorksheet in dbWorkbook.DataSheets)
                         {
-                            dbWorksheet.Columns.AddRange(await _columnController.GetByWorksheetIdAsync(dbWorksheet.Id));
-                            dbWorksheet.Rows.AddRange(await _rowController.GetByWorksheetIdAsync(dbWorksheet.Id));
+                            dbWorksheet.DataFields.AddRange(await _columnController.GetByWorksheetIdAsync(dbWorksheet.Id));
+                            dbWorksheet.DataRows.AddRange(await _rowController.GetByWorksheetIdAsync(dbWorksheet.Id));
 
-                            foreach (var dbRow in dbWorksheet.Rows)
+                            foreach (var dbRow in dbWorksheet.DataRows)
                             {
-                                dbRow.Cells.AddRange(await _cellController.GetByRowIdAsync(dbRow.Id));
+                                dbRow.DataItems.AddRange(await _cellController.GetByRowIdAsync(dbRow.Id));
                             }
                         }
                     }
                     _logger.LogInformation("Data retrieved from database");
 
+                    // Process reports.
+
                     _logger.LogInformation("Generating tables");
                     foreach (var workbook in dbWorkbooks)
                     {
-                        foreach (var worksheet in workbook.Worksheets)
+                        foreach (var worksheet in workbook.DataSheets)
                         {
                             var table = TableEngine.GetTable(worksheet);
                             AnsiConsole.Write(table);
@@ -208,4 +208,36 @@ internal class App : IHostedService
     }
 
     #endregion
+    #region Methods - Private
+
+    private void ConfigureWorkingDirectory()
+    {
+        _logger.LogInformation("Starting {method}", nameof(ConfigureWorkingDirectory));
+
+        if (!Directory.Exists(DoneDirectoryPath))
+        {
+            _logger.LogInformation("Creating {directory}", DoneDirectoryPath);
+            Directory.CreateDirectory(DoneDirectoryPath);
+        }
+        if (!Directory.Exists(ErrorDirectoryPath))
+        {
+            _logger.LogInformation("Creating {directory}", ErrorDirectoryPath);
+            Directory.CreateDirectory(ErrorDirectoryPath);
+        }
+        if (!Directory.Exists(IncomingDirectoryPath))
+        {
+            _logger.LogInformation("Creating {directory}", IncomingDirectoryPath);
+            Directory.CreateDirectory(IncomingDirectoryPath);
+        }
+        if (!Directory.Exists(ProcessingDirectoryPath))
+        {
+            _logger.LogInformation("Creating {directory}", ProcessingDirectoryPath);
+            Directory.CreateDirectory(ProcessingDirectoryPath);
+        }
+
+        _logger.LogInformation("Finished {method}", nameof(ConfigureWorkingDirectory));
+    }
+
+#endregion
+
 }

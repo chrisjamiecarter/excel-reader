@@ -18,26 +18,26 @@ public class WorkbookController : IWorkbookController
     /// </summary>
     /// <param name="workbook">The Workbook to create in the Repository.</param>
     /// <returns>The ID of the created entity.</returns>
-    public async Task<int> CreateAsync(Workbook workbook)
+    public async Task<int> CreateAsync(DataFile workbook)
     {
         var entity = WorkbookEntity.MapFrom(workbook);
 
         return await _unitOfWork.Workbooks.AddAndGetIdAsync(entity);
     }
 
-    public async Task<IReadOnlyList<Workbook>> GetAsync()
+    public async Task<IReadOnlyList<DataFile>> GetAsync()
     {
         var output = await _unitOfWork.Workbooks.GetAsync();
         return output.Select(WorkbookEntity.MapTo).ToList();
     }
 
-    public async Task<Workbook?> GetAsync(int id)
+    public async Task<DataFile?> GetAsync(int id)
     {
         var output = await _unitOfWork.Workbooks.GetAsync(id);
         return output is null ? null : WorkbookEntity.MapTo(output);
     }
 
-    public async Task<bool> UpdateAsync(Workbook workbook)
+    public async Task<bool> UpdateAsync(DataFile workbook)
     {
         var entity = WorkbookEntity.MapFrom(workbook);
 
@@ -46,7 +46,7 @@ public class WorkbookController : IWorkbookController
         return result > 0;
     }
 
-    public async Task<bool> DeleteAsync(Workbook workbook)
+    public async Task<bool> DeleteAsync(DataFile workbook)
     {
         var entity = WorkbookEntity.MapFrom(workbook);
 

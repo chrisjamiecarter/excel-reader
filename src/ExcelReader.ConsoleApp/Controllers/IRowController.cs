@@ -3,10 +3,10 @@
 namespace ExcelReader.ConsoleApp.Controllers;
 public interface IRowController
 {
-    Task<int> CreateAsync(Row row);
-    Task<bool> DeleteAsync(Row row);
-    Task<IReadOnlyList<Row>> GetAsync();
-    Task<Row?> GetAsync(int id);
-    Task<IReadOnlyList<Row>> GetByWorksheetIdAsync(int worksheetId);
-    Task<bool> UpdateAsync(Row row);
+    Task<int> CreateAsync(DataRow row);
+    Task<bool> DeleteAsync(DataRow row);
+    Task<IReadOnlyList<DataRow>> GetAsync();
+    Task<DataRow?> GetAsync(int id);
+    Task<IReadOnlyList<DataRow>> GetByWorksheetIdAsync(int worksheetId);
+    Task<bool> UpdateAsync(DataRow row);
 }

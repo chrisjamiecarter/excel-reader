@@ -25,7 +25,7 @@ public class WorksheetEntity
     #endregion
     #region Methods
 
-    public static WorksheetEntity MapFrom(Worksheet worksheet)
+    public static WorksheetEntity MapFrom(DataSheet worksheet)
     {
         ArgumentNullException.ThrowIfNull(worksheet, nameof(worksheet));
         ArgumentException.ThrowIfNullOrWhiteSpace(worksheet.Name, nameof(worksheet.Name));
@@ -33,21 +33,21 @@ public class WorksheetEntity
         return new WorksheetEntity
         {
             Id = worksheet.Id,
-            WorkbookId = worksheet.WorkbookId,
+            WorkbookId = worksheet.DataFileId,
             Position = worksheet.Position,
             Name = worksheet.Name,
         };
     }
 
-    public static Worksheet MapTo(WorksheetEntity entity)
+    public static DataSheet MapTo(WorksheetEntity entity)
     {
         ArgumentNullException.ThrowIfNull(entity, nameof(entity));
         ArgumentException.ThrowIfNullOrWhiteSpace(entity.Name, nameof(entity.Name));
         
-        return new Worksheet
+        return new DataSheet
         {
             Id = entity.Id,
-            WorkbookId = entity.WorkbookId,
+            DataFileId = entity.WorkbookId,
             Position = entity.Position,
             Name = entity.Name,
         };

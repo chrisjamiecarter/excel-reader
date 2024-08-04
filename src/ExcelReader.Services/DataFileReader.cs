@@ -48,13 +48,13 @@ public class DataFileReader : IDataFileReader
         return dataFields;
     }
 
-    public List<DataRow> GenerateDataRows(ExcelWorksheet worksheet)
+    public List<DataSheetRow> GenerateDataRows(ExcelWorksheet worksheet)
     {
-        List<DataRow> dataRows = [];
+        List<DataSheetRow> dataRows = [];
 
         for (int y = 1; y < worksheet.Dimension.End.Row; y++)
         {
-            var dataRow = new DataRow
+            var dataRow = new DataSheetRow
             {
                 Position = y - 1
             };

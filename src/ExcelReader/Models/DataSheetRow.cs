@@ -1,6 +1,6 @@
 ﻿namespace ExcelReader.Models;
 
-public class DataRow
+public class DataSheetRow
 { 
     #region Properties
 

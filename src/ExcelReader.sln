@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExcelReader.Data", "ExcelRe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExcelReader.ConsoleApp", "ExcelReader.ConsoleApp\ExcelReader.ConsoleApp.csproj", "{EFF23248-4E60-45D5-B01D-B391B3992F13}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExcelReader.Services", "ExcelReader.Services\ExcelReader.Services.csproj", "{6F24FC21-B2E4-48FD-8E91-C848A9B8E72B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{EFF23248-4E60-45D5-B01D-B391B3992F13}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFF23248-4E60-45D5-B01D-B391B3992F13}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFF23248-4E60-45D5-B01D-B391B3992F13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F24FC21-B2E4-48FD-8E91-C848A9B8E72B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F24FC21-B2E4-48FD-8E91-C848A9B8E72B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F24FC21-B2E4-48FD-8E91-C848A9B8E72B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F24FC21-B2E4-48FD-8E91-C848A9B8E72B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

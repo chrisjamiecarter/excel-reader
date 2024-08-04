@@ -18,31 +18,31 @@ public class RowController : IRowController
     /// </summary>
     /// <param name="row">The Row to create in the Repository.</param>
     /// <returns>The ID of the created entity.</returns>
-    public async Task<int> CreateAsync(DataRow row)
+    public async Task<int> CreateAsync(DataSheetRow row)
     {
         var entity = RowEntity.MapFrom(row);
 
         return await _unitOfWork.Rows.AddAndGetIdAsync(entity);
     }
 
-    public async Task<IReadOnlyList<DataRow>> GetAsync()
+    public async Task<IReadOnlyList<DataSheetRow>> GetAsync()
     {
         var output = await _unitOfWork.Rows.GetAsync();
         return output.Select(RowEntity.MapTo).ToList();
     }
 
-    public async Task<DataRow?> GetAsync(int id)
+    public async Task<DataSheetRow?> GetAsync(int id)
     {
         var output = await _unitOfWork.Rows.GetAsync(id);
         return output is null ? null : RowEntity.MapTo(output);
     }
 
-    public async Task<IReadOnlyList<DataRow>> GetByWorksheetIdAsync(int worksheetId)
+    public async Task<IReadOnlyList<DataSheetRow>> GetByWorksheetIdAsync(int worksheetId)
     {
         var output = await _unitOfWork.Rows.GetByWorksheetIdAsync(worksheetId);
         return output.Select(RowEntity.MapTo).ToList();
     }
-    public async Task<bool> UpdateAsync(DataRow row)
+    public async Task<bool> UpdateAsync(DataSheetRow row)
     {
         var entity = RowEntity.MapFrom(row);
 
@@ -51,7 +51,7 @@ public class RowController : IRowController
         return result > 0;
     }
 
-    public async Task<bool> DeleteAsync(DataRow row)
+    public async Task<bool> DeleteAsync(DataSheetRow row)
     {
         var entity = RowEntity.MapFrom(row);
 

@@ -3,26 +3,34 @@ using System.Data.SQLite;
 using System.Reflection;
 using System.Text;
 using Dapper;
+using ExcelReader.Configurations;
+using Microsoft.Extensions.Options;
 using Database = SQLite;
 
 namespace ExcelReader.Data.Repositories;
 
-public class SqliteRepository<TEntity> : IRepository<TEntity> where TEntity : class
+public class SqliteEntityRepository<TEntity> : IEntityRepository<TEntity> where TEntity : class
 {
-    #region Constants
+    #region Fields
 
-    private readonly string _databaseName = "ExcelReader";
+    private readonly ApplicationOptions _options;
 
-    private readonly string _databaseExtension = ".db";
+    #endregion
+    #region Constructors
+
+    public SqliteEntityRepository(IOptions<ApplicationOptions> options)
+    {
+        _options = options.Value;
+    }
 
     #endregion
     #region Properties
 
     public string ConnectionString => $"Data Source={FileName}";
 
-    public string FileName => Path.ChangeExtension(_databaseName, _databaseExtension);
+    private string FileName => Path.ChangeExtension(_options.DatabaseName, _options.DatabaseExtension);
 
-    public string FilePath => Path.GetFullPath(FileName);
+    private string FilePath => Path.GetFullPath(FileName);
 
     #endregion
     #region Methods - Public
@@ -111,7 +119,7 @@ public class SqliteRepository<TEntity> : IRepository<TEntity> where TEntity : cl
     #endregion
     #region Methods - Private
 
-    private string GetTableName()
+    public string GetTableName()
     {
         var type = typeof(TEntity);
         var tableAttribute = type.GetCustomAttribute<Database.TableAttribute>();

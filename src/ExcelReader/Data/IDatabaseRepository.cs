@@ -1,7 +1,9 @@
 ﻿namespace ExcelReader.Data.Repositories;
 
-public interface ISqliteDatabaseRepository
+public interface IDatabaseRepository
 {
+    string ConnectionString { get; }
+
     void EnsureCreated();
     void EnsureDeleted();
 }

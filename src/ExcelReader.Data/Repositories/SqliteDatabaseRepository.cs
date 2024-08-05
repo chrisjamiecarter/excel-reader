@@ -4,40 +4,40 @@ using Microsoft.Extensions.Options;
 
 namespace ExcelReader.Data.Repositories;
 
-public class SqliteDatabaseRepository : ISqliteDatabaseRepository
+public class SqliteDatabaseRepository : IDatabaseRepository
 {
     #region Fields
 
     private readonly ApplicationOptions _options;
-    private readonly IWorkbookRepository _workbookRepository;
-    private readonly IWorksheetRepository _worksheetRepository;
-    private readonly IColumnRepository _columnRepository;
-    private readonly IRowRepository _rowRepository;
-    private readonly ICellRepository _cellRepository;
+    private readonly IDataFileRepository _dataFileRepository;
+    private readonly IDataSheetRepository _dataSheetRepository;
+    private readonly IDataFieldRepository _dataFieldRepository;
+    private readonly IDataSheetRowRepository _dataSheetRowRepository;
+    private readonly IDataItemRepository _dataItemRepository;
 
     #endregion
     #region Constructors
 
     public SqliteDatabaseRepository(
         IOptions<ApplicationOptions> options,
-        IWorkbookRepository workbookRepository, 
-        IWorksheetRepository worksheetRepository,
-        IColumnRepository columnRepository,
-        IRowRepository rowRepository,
-        ICellRepository cellRepository)
+        IDataFileRepository dataFileRepository, 
+        IDataSheetRepository dataSheetRepository,
+        IDataFieldRepository dataFieldRepository,
+        IDataSheetRowRepository dataSheetRowRepository,
+        IDataItemRepository dataItemRepository)
     {
         _options = options.Value;
-        _workbookRepository = workbookRepository;
-        _worksheetRepository = worksheetRepository;
-        _columnRepository = columnRepository;
-        _rowRepository = rowRepository;
-        _cellRepository = cellRepository;
+        _dataFileRepository = dataFileRepository;
+        _dataSheetRepository = dataSheetRepository;
+        _dataFieldRepository = dataFieldRepository;
+        _dataSheetRowRepository = dataSheetRowRepository;
+        _dataItemRepository = dataItemRepository;
     }
 
     #endregion
     #region Properties
 
-    private string ConnectionString => $"Data Source={FileName}";
+    public string ConnectionString => $"Data Source={FileName}";
 
     private string FileName => Path.ChangeExtension(_options.DatabaseName, _options.DatabaseExtension);
 
@@ -54,11 +54,11 @@ public class SqliteDatabaseRepository : ISqliteDatabaseRepository
         connection.Open();
         connection.Close();
 
-        _workbookRepository.CreateTable();
-        _worksheetRepository.CreateTable();
-        _columnRepository.CreateTable();
-        _rowRepository.CreateTable();
-        _cellRepository.CreateTable();
+        _dataFileRepository.CreateTable();
+        _dataSheetRepository.CreateTable();
+        _dataFieldRepository.CreateTable();
+        _dataSheetRowRepository.CreateTable();
+        _dataItemRepository.CreateTable();
     }
 
     public void EnsureDeleted()

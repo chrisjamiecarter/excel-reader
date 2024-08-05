@@ -126,14 +126,14 @@ internal class App : IHostedService
                     dataField.DataSheetId = dataSheet.Id;
                     dataField.Id = await _databaseService.CreateAsync(dataField);
                 }
-                foreach (var dataSheetRow in dataSheet.DataRows)
+                foreach (var dataSheetRow in dataSheet.DataSheetRows)
                 {
                     dataSheetRow.DataSheetId = dataSheet.Id;
                     dataSheetRow.Id = await _databaseService.CreateAsync(dataSheetRow);
                     foreach (var dataItem in dataSheetRow.DataItems)
                     {
                         dataItem.DataFieldId = dataSheet.DataFields.First(x => x.Position == dataItem.Position).Id;
-                        dataItem.DataRowId = dataSheetRow.Id;
+                        dataItem.DataSheetRowId = dataSheetRow.Id;
                         dataItem.Id = await _databaseService.CreateAsync(dataItem);
                     }
                 }
@@ -191,9 +191,9 @@ internal class App : IHostedService
             foreach (var dataSheet in dataFile.DataSheets)
             {
                 dataSheet.DataFields.AddRange(await _databaseService.GetDataFieldsByWorksheetIdAsync(dataSheet.Id));
-                dataSheet.DataRows.AddRange(await _databaseService.GetDataSheetRowsByWorksheetIdAsync(dataSheet.Id));
+                dataSheet.DataSheetRows.AddRange(await _databaseService.GetDataSheetRowsByWorksheetIdAsync(dataSheet.Id));
 
-                foreach (var dataSheetRow in dataSheet.DataRows)
+                foreach (var dataSheetRow in dataSheet.DataSheetRows)
                 {
                     dataSheetRow.DataItems.AddRange(await _databaseService.GetDataItemsByRowIdAsync(dataSheetRow.Id));
                 }

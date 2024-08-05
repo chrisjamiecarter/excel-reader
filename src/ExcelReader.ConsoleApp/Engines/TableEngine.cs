@@ -15,7 +15,7 @@ internal class TableEngine
         var table = new Table
         {
             Title = new TableTitle(title),
-            Caption = new TableTitle($"{worksheet.DataRows.Count} rows."),
+            Caption = new TableTitle($"{worksheet.DataSheetRows.Count} rows."),
             Expand = true,
         };
 
@@ -24,7 +24,7 @@ internal class TableEngine
             table.AddColumn(column.Name);
         }
 
-        foreach(var row in worksheet.DataRows.OrderBy(o => o.Position))
+        foreach(var row in worksheet.DataSheetRows.OrderBy(o => o.Position))
         {
             table.AddRow(row.DataItems.OrderBy(c => c.Position).Select(c => c.Value).ToArray());
         }

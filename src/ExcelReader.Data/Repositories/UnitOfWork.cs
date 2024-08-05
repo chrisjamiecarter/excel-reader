@@ -3,30 +3,30 @@
 public class UnitOfWork : IUnitOfWork
 {
     public UnitOfWork(
-        ISqliteDatabaseRepository sqliteDatabaseRepository, 
-        IWorkbookRepository workbookRepository, 
-        IWorksheetRepository worksheetRepository,
-        IColumnRepository columnRepository,
-        IRowRepository rowRepository,
-        ICellRepository cellRepository)
+        IDatabaseRepository databaseRepository, 
+        IDataFileRepository dataFileRepository, 
+        IDataSheetRepository dataSheetRepository,
+        IDataFieldRepository dataFieldRepository,
+        IDataSheetRowRepository dataSheetRowRepository,
+        IDataItemRepository dataItemRepository)
     {
-        Database = sqliteDatabaseRepository;
-        Workbooks = workbookRepository;
-        Worksheets = worksheetRepository;
-        Columns = columnRepository;
-        Rows = rowRepository;
-        Cells = cellRepository;
+        Database = databaseRepository;
+        DataFiles = dataFileRepository;
+        DataSheets = dataSheetRepository;
+        DataFields = dataFieldRepository;
+        DataSheetRows = dataSheetRowRepository;
+        DataItems = dataItemRepository;
     }
 
-    public ISqliteDatabaseRepository Database { get; }
+    public IDatabaseRepository Database { get; }
 
-    public IWorkbookRepository Workbooks { get; }
+    public IDataFileRepository DataFiles { get; }
 
-    public IWorksheetRepository Worksheets { get; }
+    public IDataSheetRepository DataSheets { get; }
 
-    public IColumnRepository Columns { get; }
+    public IDataFieldRepository DataFields { get; }
 
-    public IRowRepository Rows { get; }
+    public IDataSheetRowRepository DataSheetRows { get; }
 
-    public ICellRepository Cells { get; }
+    public IDataItemRepository DataItems { get; }
 }

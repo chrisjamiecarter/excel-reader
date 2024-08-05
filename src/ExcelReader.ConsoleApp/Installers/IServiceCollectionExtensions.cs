@@ -12,13 +12,13 @@ public static class IServiceCollectionExtension
         services.AddHostedService<App>();
 
         // Data.
-        services.AddSingleton(typeof(IRepository<>), typeof(SqliteRepository<>));
-        services.AddScoped<ISqliteDatabaseRepository, SqliteDatabaseRepository>();
-        services.AddScoped<IWorkbookRepository, WorkbookRepository>();
-        services.AddScoped<IWorksheetRepository, WorksheetRepository>();
-        services.AddScoped<IColumnRepository, ColumnRepository>();
-        services.AddScoped<IRowRepository, RowRepository>();
-        services.AddScoped<ICellRepository, CellRepository>();
+        services.AddSingleton(typeof(IEntityRepository<>), typeof(SqliteEntityRepository<>));
+        services.AddScoped<IDatabaseRepository, SqliteDatabaseRepository>();
+        services.AddScoped<IDataFileRepository, DataFileRepository>();
+        services.AddScoped<IDataSheetRepository, DataSheetRepository>();
+        services.AddScoped<IDataFieldRepository, DataFieldRepository>();
+        services.AddScoped<IDataSheetRowRepository, DataSheetRowRepository>();
+        services.AddScoped<IDataItemRepository, DataItemRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         // Service.

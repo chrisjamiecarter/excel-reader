@@ -8,7 +8,7 @@ public class DataItem
 
     public int DataFieldId { get; set; }
 
-    public int DataRowId { get; set; }
+    public int DataSheetRowId { get; set; }
 
     public int Position { get; set; }
 

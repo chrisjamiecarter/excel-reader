@@ -3,8 +3,8 @@ using SQLite;
 
 namespace ExcelReader.Data.Entities;
 
-[Table("Workbook")]
-public class WorkbookEntity
+[Table("DataFile")]
+public class DataFileEntity
 {
     #region Properties
 
@@ -25,22 +25,22 @@ public class WorkbookEntity
     #endregion
     #region Methods
 
-    public static WorkbookEntity MapFrom(DataFile workbook)
+    public static DataFileEntity MapFrom(DataFile model)
     {
-        ArgumentNullException.ThrowIfNull(workbook, nameof(workbook));
-        ArgumentException.ThrowIfNullOrWhiteSpace(workbook.Name, nameof(workbook.Name));
-        ArgumentException.ThrowIfNullOrWhiteSpace(workbook.Extension, nameof(workbook.Extension));
+        ArgumentNullException.ThrowIfNull(model, nameof(model));
+        ArgumentException.ThrowIfNullOrWhiteSpace(model.Name, nameof(model.Name));
+        ArgumentException.ThrowIfNullOrWhiteSpace(model.Extension, nameof(model.Extension));
 
-        return new WorkbookEntity
+        return new DataFileEntity
         {
-            Id = workbook.Id,
-            Name = workbook.Name,
-            Extension = workbook.Extension,
-            Size = workbook.Size
+            Id = model.Id,
+            Name = model.Name,
+            Extension = model.Extension,
+            Size = model.Size
         };
     }
 
-    public static DataFile MapTo(WorkbookEntity entity)
+    public static DataFile MapTo(DataFileEntity entity)
     {
         ArgumentNullException.ThrowIfNull(entity, nameof(entity));
         ArgumentException.ThrowIfNullOrWhiteSpace(entity.Name, nameof(entity.Name));

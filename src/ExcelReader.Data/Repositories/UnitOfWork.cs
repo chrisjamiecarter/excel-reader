@@ -1,10 +1,15 @@
 ﻿namespace ExcelReader.Data.Repositories;
 
+/// <summary>
+/// Unit of Work pattern implementation.
+/// </summary>
 public class UnitOfWork : IUnitOfWork
 {
+    #region Constructors
+
     public UnitOfWork(
-        IDatabaseRepository databaseRepository, 
-        IDataFileRepository dataFileRepository, 
+        IDatabaseRepository databaseRepository,
+        IDataFileRepository dataFileRepository,
         IDataSheetRepository dataSheetRepository,
         IDataFieldRepository dataFieldRepository,
         IDataSheetRowRepository dataSheetRowRepository,
@@ -18,6 +23,9 @@ public class UnitOfWork : IUnitOfWork
         DataItems = dataItemRepository;
     }
 
+    #endregion
+    #region Properties
+
     public IDatabaseRepository Database { get; }
 
     public IDataFileRepository DataFiles { get; }
@@ -29,4 +37,6 @@ public class UnitOfWork : IUnitOfWork
     public IDataSheetRowRepository DataSheetRows { get; }
 
     public IDataItemRepository DataItems { get; }
+
+    #endregion
 }

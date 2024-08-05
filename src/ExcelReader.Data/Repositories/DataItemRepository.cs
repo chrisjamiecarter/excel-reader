@@ -2,11 +2,13 @@
 using Dapper;
 using ExcelReader.Configurations;
 using ExcelReader.Data.Entities;
-using ExcelReader.Models;
 using Microsoft.Extensions.Options;
 
 namespace ExcelReader.Data.Repositories;
 
+/// <summary>
+/// Specific database methods required for the Data Item entity.
+/// </summary>
 public class DataItemRepository : SqliteEntityRepository<DataItemEntity>, IDataItemRepository
 {
     #region Constructors

@@ -9,6 +9,9 @@ using Database = SQLite;
 
 namespace ExcelReader.Data.Repositories;
 
+/// <summary>
+/// Sqlite generic entity repository methods.
+/// </summary>
 public class SqliteEntityRepository<TEntity> : IEntityRepository<TEntity> where TEntity : class
 {
     #region Fields
@@ -35,17 +38,10 @@ public class SqliteEntityRepository<TEntity> : IEntityRepository<TEntity> where 
     #endregion
     #region Methods - Public
 
-    public bool CreateTable()
-    {
-        var database = new Database.SQLiteConnection(FilePath);
-        var result = database.CreateTable<TEntity>();
-        return result is Database.CreateTableResult.Created;
-    }
-
     public async Task<int> AddAsync(TEntity entity)
     {
         string tableName = GetTableName();
-        string columns = GetColumns(true);
+        string columns = SqliteEntityRepository<TEntity>.GetColumns(true);
         string properties = GetPropertyNames(true);
         string query = $"INSERT INTO {tableName} ({columns}) VALUES ({properties})";
 
@@ -56,12 +52,19 @@ public class SqliteEntityRepository<TEntity> : IEntityRepository<TEntity> where 
     public async Task<int> AddAndGetIdAsync(TEntity entity)
     {
         string tableName = GetTableName();
-        string columns = GetColumns(true);
+        string columns = SqliteEntityRepository<TEntity>.GetColumns(true);
         string properties = GetPropertyNames(true);
         string query = $"INSERT INTO {tableName} ({columns}) VALUES ({properties}); SELECT last_insert_rowid();";
 
         using var connection = new SQLiteConnection(ConnectionString);
         return await connection.ExecuteScalarAsync<int>(query, entity);
+    }
+
+    public bool CreateTable()
+    {
+        var database = new Database.SQLiteConnection(FilePath);
+        var result = database.CreateTable<TEntity>();
+        return result is Database.CreateTableResult.Created;
     }
 
     public async Task<int> DeleteAsync(TEntity entity)
@@ -74,7 +77,7 @@ public class SqliteEntityRepository<TEntity> : IEntityRepository<TEntity> where 
         using var connection = new SQLiteConnection(ConnectionString);
         return await connection.ExecuteAsync(query, entity);
     }
-        
+
     public async Task<IEnumerable<TEntity>> GetAsync()
     {
         string tableName = GetTableName();
@@ -93,6 +96,13 @@ public class SqliteEntityRepository<TEntity> : IEntityRepository<TEntity> where 
 
         using var connection = new SQLiteConnection(ConnectionString);
         return await connection.QuerySingleOrDefaultAsync<TEntity>(query);
+    }
+
+    public string GetTableName()
+    {
+        var type = typeof(TEntity);
+        var tableAttribute = type.GetCustomAttribute<Database.TableAttribute>();
+        return tableAttribute is null ? type.Name : tableAttribute.Name;
     }
 
     public async Task<int> UpdateAsync(TEntity entity)
@@ -118,13 +128,6 @@ public class SqliteEntityRepository<TEntity> : IEntityRepository<TEntity> where 
 
     #endregion
     #region Methods - Private
-
-    public string GetTableName()
-    {
-        var type = typeof(TEntity);
-        var tableAttribute = type.GetCustomAttribute<Database.TableAttribute>();
-        return tableAttribute is null ? type.Name : tableAttribute.Name;
-    }
 
     public static string? GetKeyColumnName()
     {
@@ -153,7 +156,7 @@ public class SqliteEntityRepository<TEntity> : IEntityRepository<TEntity> where 
         return null;
     }
 
-    private string GetColumns(bool excludeKey = false)
+    private static string GetColumns(bool excludeKey = false)
     {
         var type = typeof(TEntity);
         var columns = string.Join(", ", type.GetProperties()
@@ -193,12 +196,7 @@ public class SqliteEntityRepository<TEntity> : IEntityRepository<TEntity> where 
         var properties = typeof(TEntity).GetProperties()
             .Where(p => p.GetCustomAttribute<Database.PrimaryKeyAttribute>() != null);
 
-        if (properties.Any())
-        {
-            return properties.FirstOrDefault().Name;
-        }
-
-        return null;
+        return properties.Any() ? (properties.First().Name) : null;
     }
 
     #endregion

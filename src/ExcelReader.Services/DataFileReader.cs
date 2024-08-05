@@ -3,8 +3,13 @@ using OfficeOpenXml;
 
 namespace ExcelReader.Services;
 
+/// <summary>
+/// Reads a generic data file with EPPlus.
+/// </summary>
 public class DataFileReader : IDataFileReader
 {
+    #region Methods
+
     public List<DataSheet> GenerateDataSheets(ExcelPackage package)
     {
         List<DataSheet> dataSheets = [];
@@ -73,4 +78,6 @@ public class DataFileReader : IDataFileReader
 
         return dataRows;
     }
+
+    #endregion
 }

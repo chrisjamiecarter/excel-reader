@@ -5,6 +5,8 @@
 /// </summary>
 public static class DirectoryName
 {
+    #region Constants
+
     public const string Incoming = "Incoming";
 
     public const string Processing = "Processing";
@@ -12,4 +14,6 @@ public static class DirectoryName
     public const string Done = "Done";
 
     public const string Error = "Error";
+
+    #endregion
 }

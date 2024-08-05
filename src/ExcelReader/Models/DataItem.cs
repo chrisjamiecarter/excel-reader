@@ -1,7 +1,10 @@
 ﻿namespace ExcelReader.Models;
 
+/// <summary>
+/// Represents a cell / value in a data file.
+/// </summary>
 public class DataItem
-{ 
+{
     #region Properties
 
     public int Id { get; set; }

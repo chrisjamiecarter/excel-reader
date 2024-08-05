@@ -3,6 +3,9 @@ using SQLite;
 
 namespace ExcelReader.Data.Entities;
 
+/// <summary>
+/// Database version of the DataItem object.
+/// </summary>
 [Table("DataItem")]
 public class DataItemEntity
 {

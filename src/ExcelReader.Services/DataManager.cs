@@ -1,20 +1,29 @@
-﻿using ExcelReader.Data.Entities;
-using ExcelReader.Data.Repositories;
-using ExcelReader.Models;
+﻿using ExcelReader.Data.Repositories;
 using Microsoft.Extensions.Logging;
 
 namespace ExcelReader.Services;
 
-public partial class DatabaseService : IDatabaseService
+/// <summary>
+/// Partial DataManager class for non-entity specific data access methods.
+/// </summary>
+public partial class DataManager : IDataManager
 {
-    private readonly ILogger<DatabaseService> _logger;
+    #region Fields
+
+    private readonly ILogger<DataManager> _logger;
     private readonly IUnitOfWork _unitOfWork;
 
-    public DatabaseService(ILogger<DatabaseService> logger, IUnitOfWork unitOfWork)
+    #endregion
+    #region Constructors
+
+    public DataManager(ILogger<DataManager> logger, IUnitOfWork unitOfWork)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
     }
+
+    #endregion
+    #region Methods
 
     public bool ResetDatabase()
     {
@@ -25,4 +34,6 @@ public partial class DatabaseService : IDatabaseService
 
         return true;
     }
+
+    #endregion
 }

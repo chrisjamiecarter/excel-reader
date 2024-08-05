@@ -11,16 +11,14 @@ namespace ExcelReader.ConsoleApp.Installers;
 /// </summary>
 public static class IHostBuilderExtensions
 {
-    /// <summary>
-    /// Gets the installers for this application and performs the InstallServices method on each.
-    /// </summary>
-    /// <param name="builder">The IHostBuilder.</param>
+    #region Methods
+
     public static void AddDependancies(this IHostBuilder builder)
     {
         builder.ConfigureServices((hostContext, services) =>
         {
             services.RegisterServices();
-            
+
             // Configure Logging.
             services.AddSerilog((service, config) => config.ReadFrom.Configuration(hostContext.Configuration).Enrich.FromLogContext().WriteTo.Console());
 
@@ -28,4 +26,6 @@ public static class IHostBuilderExtensions
             services.AddOptions<ApplicationOptions>().Bind(hostContext.Configuration.GetSection(nameof(ApplicationOptions)));
         });
     }
+
+    #endregion
 }

@@ -1,11 +1,14 @@
-﻿using ExcelReader.Data.Entities;
+﻿using System.Data.SQLite;
 using Dapper;
-using System.Data.SQLite;
 using ExcelReader.Configurations;
+using ExcelReader.Data.Entities;
 using Microsoft.Extensions.Options;
 
 namespace ExcelReader.Data.Repositories;
 
+/// <summary>
+/// Specific database methods required for the Data Field entity.
+/// </summary>
 public class DataFieldRepository : SqliteEntityRepository<DataFieldEntity>, IDataFieldRepository
 {
     #region Constructors

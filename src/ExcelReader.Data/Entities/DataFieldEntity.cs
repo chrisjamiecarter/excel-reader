@@ -3,6 +3,9 @@ using SQLite;
 
 namespace ExcelReader.Data.Entities;
 
+/// <summary>
+/// Database version of the DataField object.
+/// </summary>
 [Table("DataField")]
 public class DataFieldEntity
 {

@@ -4,6 +4,9 @@ using Microsoft.Extensions.Options;
 
 namespace ExcelReader.Data.Repositories;
 
+/// <summary>
+/// Sqlite database repository methods.
+/// </summary>
 public class SqliteDatabaseRepository : IDatabaseRepository
 {
     #region Fields
@@ -20,7 +23,7 @@ public class SqliteDatabaseRepository : IDatabaseRepository
 
     public SqliteDatabaseRepository(
         IOptions<ApplicationOptions> options,
-        IDataFileRepository dataFileRepository, 
+        IDataFileRepository dataFileRepository,
         IDataSheetRepository dataSheetRepository,
         IDataFieldRepository dataFieldRepository,
         IDataSheetRowRepository dataSheetRowRepository,
@@ -49,7 +52,7 @@ public class SqliteDatabaseRepository : IDatabaseRepository
     public void EnsureCreated()
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(nameof(FileName));
-        
+
         using var connection = new SQLiteConnection(ConnectionString);
         connection.Open();
         connection.Close();

@@ -23,11 +23,11 @@ internal class Program
             .Enrich.FromLogContext()
             .WriteTo.Console()
             .CreateLogger();
-        
+
         try
         {
             Log.Information("Application starting");
-            
+
             var builder = Host.CreateDefaultBuilder(args);
 
             builder.AddDependancies();

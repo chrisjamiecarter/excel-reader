@@ -19,16 +19,16 @@ internal class TableEngine
             Expand = true,
         };
 
-        foreach(var column in worksheet.DataFields.OrderBy(o => o.Position))
+        foreach (var column in worksheet.DataFields.OrderBy(o => o.Position))
         {
             table.AddColumn(column.Name);
         }
 
-        foreach(var row in worksheet.DataSheetRows.OrderBy(o => o.Position))
+        foreach (var row in worksheet.DataSheetRows.OrderBy(o => o.Position))
         {
             table.AddRow(row.DataItems.OrderBy(c => c.Position).Select(c => c.Value).ToArray());
         }
-        
+
         return table;
     }
 

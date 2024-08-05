@@ -1,7 +1,10 @@
 ﻿namespace ExcelReader.Models;
 
+/// <summary>
+/// Represents a row in a data file.
+/// </summary>
 public class DataSheetRow
-{ 
+{
     #region Properties
 
     public int Id { get; set; }
@@ -19,10 +22,10 @@ public class DataSheetRow
 
     public void Add(int position, string value)
     {
-        Add(new DataItem 
-        { 
-            Position = position, 
-            Value = value 
+        Add(new DataItem
+        {
+            Position = position,
+            Value = value
         });
     }
 

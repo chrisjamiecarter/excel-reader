@@ -2,6 +2,10 @@
 using OfficeOpenXml;
 
 namespace ExcelReader.Services;
+
+/// <summary>
+/// Definition of the generic Data File Reader that must be implemented.
+/// </summary>
 public interface IDataFileReader
 {
     List<DataField> GenerateDataFields(ExcelWorksheet worksheet);

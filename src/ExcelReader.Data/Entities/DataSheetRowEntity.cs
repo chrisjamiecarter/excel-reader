@@ -3,6 +3,9 @@ using SQLite;
 
 namespace ExcelReader.Data.Entities;
 
+/// <summary>
+/// Database version of the DataSheetRow object.
+/// </summary>
 [Table("DataSheetRow")]
 public class DataSheetRowEntity
 {
@@ -25,7 +28,7 @@ public class DataSheetRowEntity
     public static DataSheetRowEntity MapFrom(DataSheetRow model)
     {
         ArgumentNullException.ThrowIfNull(model, nameof(model));
-        
+
         return new DataSheetRowEntity
         {
             Id = model.Id,
@@ -37,7 +40,7 @@ public class DataSheetRowEntity
     public static DataSheetRow MapTo(DataSheetRowEntity entity)
     {
         ArgumentNullException.ThrowIfNull(entity, nameof(entity));
-        
+
         return new DataSheetRow
         {
             Id = entity.Id,

@@ -6,6 +6,9 @@ using Microsoft.Extensions.Options;
 
 namespace ExcelReader.Data.Repositories;
 
+/// <summary>
+/// Specific database methods required for the Data Sheet Row entity.
+/// </summary>
 public class DataSheetRowRepository : SqliteEntityRepository<DataSheetRowEntity>, IDataSheetRowRepository
 {
     #region Constructors

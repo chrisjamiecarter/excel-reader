@@ -3,6 +3,9 @@ using Microsoft.Extensions.Logging;
 
 namespace ExcelReader.Services;
 
+/// <summary>
+/// Processes a file and routes to the correct DataFileReader implementation.
+/// </summary>
 public class DataFileProcessor : IDataFileProcessor
 {
     #region Fields
@@ -28,17 +31,12 @@ public class DataFileProcessor : IDataFileProcessor
     {
         ArgumentNullException.ThrowIfNull(fileInfo, nameof(fileInfo));
 
-        switch (fileInfo.Extension.ToLower())
+        return fileInfo.Extension.ToLower() switch
         {
-            case ".csv":
-                // SupportedFileExtension.CSV;
-                return _csvDataFileReader.ReadDataFile(fileInfo);
-            case ".xlsx":
-                //SupportedFileExtension.XLSX;
-                return _excelDataFileReader.ReadDataFile(fileInfo);
-            default:
-                throw new InvalidOperationException($"Unsupported file type: {fileInfo.Extension}");
-        }
+            ".csv" => _csvDataFileReader.ReadDataFile(fileInfo),
+            ".xlsx" => _excelDataFileReader.ReadDataFile(fileInfo),
+            _ => throw new InvalidOperationException($"Unsupported file type: {fileInfo.Extension}"),
+        };
     }
 
     #endregion

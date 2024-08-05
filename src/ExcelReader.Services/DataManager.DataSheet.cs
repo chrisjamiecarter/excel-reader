@@ -1,11 +1,15 @@
 ﻿using ExcelReader.Data.Entities;
-using ExcelReader.Data.Repositories;
 using ExcelReader.Models;
 
 namespace ExcelReader.Services;
 
-public partial class DatabaseService : IDatabaseService
+/// <summary>
+/// Partial DataManager class for entity specific data access methods.
+/// </summary>
+public partial class DataManager : IDataManager
 {
+    #region
+
     /// <summary>
     /// Creates the Worksheet in the Repository and returns the ID of the created entity.
     /// </summary>
@@ -53,4 +57,6 @@ public partial class DatabaseService : IDatabaseService
 
         return result > 0;
     }
+
+    #endregion
 }

@@ -4,8 +4,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ExcelReader.ConsoleApp.Installers;
 
+/// <summary>
+/// Microsoft.Extensions.DependencyInjection.IServiceCollection interface extension methods.
+/// </summary>
 public static class IServiceCollectionExtension
 {
+    #region Methods
+
     public static void RegisterServices(this IServiceCollection services)
     {
         // App.
@@ -26,6 +31,8 @@ public static class IServiceCollectionExtension
         services.AddScoped<IDataFileReader, DataFileReader>();
         services.AddScoped<ICsvDataFileReader, CsvDataFileReader>();
         services.AddScoped<IExcelDataFileReader, ExcelDataFileReader>();
-        services.AddScoped<IDatabaseService, DatabaseService>();
+        services.AddScoped<IDataManager, DataManager>();
     }
+
+    #endregion
 }

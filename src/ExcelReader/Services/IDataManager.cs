@@ -2,7 +2,10 @@
 
 namespace ExcelReader.Services;
 
-public interface IDatabaseService
+/// <summary>
+/// Definition of the Data Manager that must be implemented.
+/// </summary>
+public interface IDataManager
 {
     Task<int> CreateAsync(DataField column);
     Task<int> CreateAsync(DataFile workbook);

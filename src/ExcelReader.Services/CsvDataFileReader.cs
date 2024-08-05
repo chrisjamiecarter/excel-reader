@@ -4,8 +4,13 @@ using OfficeOpenXml;
 
 namespace ExcelReader.Services;
 
+/// <summary>
+/// Reads a CSV file with EPPlus.
+/// </summary>
 public class CsvDataFileReader : DataFileReader, ICsvDataFileReader
 {
+    #region Methods
+
     public DataFile ReadDataFile(FileInfo fileInfo)
     {
         ArgumentNullException.ThrowIfNull(fileInfo, nameof(fileInfo));
@@ -31,4 +36,6 @@ public class CsvDataFileReader : DataFileReader, ICsvDataFileReader
 
         return dataFile;
     }
+
+    #endregion
 }

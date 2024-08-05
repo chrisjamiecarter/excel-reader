@@ -3,6 +3,9 @@ using SQLite;
 
 namespace ExcelReader.Data.Entities;
 
+/// <summary>
+/// Database version of the DataSheet object.
+/// </summary>
 [Table("DataSheet")]
 public class DataSheetEntity
 {
@@ -29,7 +32,7 @@ public class DataSheetEntity
     {
         ArgumentNullException.ThrowIfNull(model, nameof(model));
         ArgumentException.ThrowIfNullOrWhiteSpace(model.Name, nameof(model.Name));
-        
+
         return new DataSheetEntity
         {
             Id = model.Id,
@@ -43,7 +46,7 @@ public class DataSheetEntity
     {
         ArgumentNullException.ThrowIfNull(entity, nameof(entity));
         ArgumentException.ThrowIfNullOrWhiteSpace(entity.Name, nameof(entity.Name));
-        
+
         return new DataSheet
         {
             Id = entity.Id,

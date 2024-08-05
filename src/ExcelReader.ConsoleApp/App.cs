@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using ExcelReader.Configurations;
+﻿using ExcelReader.Configurations;
 using ExcelReader.ConsoleApp.Engines;
 using ExcelReader.Constants;
 using ExcelReader.Models;
@@ -21,7 +20,7 @@ internal class App : IHostedService
     private readonly IHostApplicationLifetime _appLifetime;
     private readonly ILogger<App> _logger;
     private readonly ApplicationOptions _options;
-    private readonly IDatabaseService _databaseService;
+    private readonly IDataManager _databaseService;
     private readonly IDataFileProcessor _dataFileProcessor;
     private int? _exitCode;
 
@@ -32,7 +31,7 @@ internal class App : IHostedService
         IHostApplicationLifetime appLifetime,
         ILogger<App> logger,
         IOptions<ApplicationOptions> options,
-        IDatabaseService databaseService,
+        IDataManager databaseService,
         IDataFileProcessor dataFileProcessor)
     {
         _appLifetime = appLifetime;
@@ -52,7 +51,7 @@ internal class App : IHostedService
     public string IncomingDirectoryPath => Path.GetFullPath(Path.Combine(_options.WorkingDirectoryPath, DirectoryName.Incoming));
 
     public string ProcessingDirectoryPath => Path.GetFullPath(Path.Combine(_options.WorkingDirectoryPath, DirectoryName.Processing));
-    
+
     #endregion
     #region Methods - Public
 
@@ -113,7 +112,7 @@ internal class App : IHostedService
     private async Task AddIncomingDataFilesToDatabase(List<DataFile> incomingDataFiles)
     {
         _logger.LogInformation("Starting {method}", nameof(AddIncomingDataFilesToDatabase));
-        
+
         foreach (var dataFile in incomingDataFiles)
         {
             dataFile.Id = await _databaseService.CreateAsync(dataFile);

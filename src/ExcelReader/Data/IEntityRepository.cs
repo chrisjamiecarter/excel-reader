@@ -1,6 +1,6 @@
 ﻿namespace ExcelReader.Data.Repositories;
 
-public  interface IRepository<TEntity> where TEntity : class
+public  interface IEntityRepository<TEntity> where TEntity : class
 {
     Task<int> AddAsync(TEntity entity);
     Task<int> AddAndGetIdAsync(TEntity entity);

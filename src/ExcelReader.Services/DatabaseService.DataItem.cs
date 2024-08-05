@@ -13,43 +13,43 @@ public partial class DatabaseService : IDatabaseService
     /// <returns>The ID of the created entity.</returns>
     public async Task<int> CreateAsync(DataItem cell)
     {
-        var entity = CellEntity.MapFrom(cell);
+        var entity = DataItemEntity.MapFrom(cell);
 
-        return await _unitOfWork.Cells.AddAndGetIdAsync(entity);
+        return await _unitOfWork.DataItems.AddAndGetIdAsync(entity);
     }
 
     public async Task<IReadOnlyList<DataItem>> GetDataItemsAsync()
     {
-        var output = await _unitOfWork.Cells.GetAsync();
-        return output.Select(CellEntity.MapTo).ToList();
+        var output = await _unitOfWork.DataItems.GetAsync();
+        return output.Select(DataItemEntity.MapTo).ToList();
     }
 
     public async Task<DataItem?> GetDataItemAsync(int id)
     {
-        var output = await _unitOfWork.Cells.GetAsync(id);
-        return output is null ? null : CellEntity.MapTo(output);
+        var output = await _unitOfWork.DataItems.GetAsync(id);
+        return output is null ? null : DataItemEntity.MapTo(output);
     }
 
     public async Task<IReadOnlyList<DataItem>> GetDataItemsByRowIdAsync(int rowId)
     {
-        var output = await _unitOfWork.Cells.GetByRowIdAsync(rowId);
-        return output.Select(CellEntity.MapTo).ToList();
+        var output = await _unitOfWork.DataItems.GetByDataSheetRowIdAsync(rowId);
+        return output.Select(DataItemEntity.MapTo).ToList();
     }
 
     public async Task<bool> UpdateAsync(DataItem cell)
     {
-        var entity = CellEntity.MapFrom(cell);
+        var entity = DataItemEntity.MapFrom(cell);
 
-        var result = await _unitOfWork.Cells.UpdateAsync(entity);
+        var result = await _unitOfWork.DataItems.UpdateAsync(entity);
 
         return result > 0;
     }
 
     public async Task<bool> DeleteAsync(DataItem cell)
     {
-        var entity = CellEntity.MapFrom(cell);
+        var entity = DataItemEntity.MapFrom(cell);
 
-        var result = await _unitOfWork.Cells.DeleteAsync(entity);
+        var result = await _unitOfWork.DataItems.DeleteAsync(entity);
 
         return result > 0;
     }

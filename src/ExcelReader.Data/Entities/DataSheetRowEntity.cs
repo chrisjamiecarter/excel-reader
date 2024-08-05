@@ -1,11 +1,10 @@
 ﻿using ExcelReader.Models;
 using SQLite;
-using static Dapper.SqlMapper;
 
 namespace ExcelReader.Data.Entities;
 
-[Table("Row")]
-public class RowEntity
+[Table("DataSheetRow")]
+public class DataSheetRowEntity
 {
     #region Properties
 
@@ -15,7 +14,7 @@ public class RowEntity
     public int Id { get; set; }
 
     [NotNull]
-    public int WorksheetId { get; set; }
+    public int DataSheetId { get; set; }
 
     [NotNull]
     public int Position { get; set; }
@@ -23,26 +22,26 @@ public class RowEntity
     #endregion
     #region Methods
 
-    public static RowEntity MapFrom(DataSheetRow row)
+    public static DataSheetRowEntity MapFrom(DataSheetRow model)
     {
-        ArgumentNullException.ThrowIfNull(row, nameof(row));
+        ArgumentNullException.ThrowIfNull(model, nameof(model));
         
-        return new RowEntity
+        return new DataSheetRowEntity
         {
-            Id = row.Id,
-            WorksheetId = row.DataSheetId,
-            Position = row.Position,
+            Id = model.Id,
+            DataSheetId = model.DataSheetId,
+            Position = model.Position,
         };
     }
 
-    public static DataSheetRow MapTo(RowEntity entity)
+    public static DataSheetRow MapTo(DataSheetRowEntity entity)
     {
         ArgumentNullException.ThrowIfNull(entity, nameof(entity));
         
         return new DataSheetRow
         {
             Id = entity.Id,
-            DataSheetId = entity.WorksheetId,
+            DataSheetId = entity.DataSheetId,
             Position = entity.Position,
         };
     }

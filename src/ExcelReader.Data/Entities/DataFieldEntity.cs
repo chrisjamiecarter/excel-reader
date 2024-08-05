@@ -1,11 +1,10 @@
 ﻿using ExcelReader.Models;
 using SQLite;
-using static Dapper.SqlMapper;
 
 namespace ExcelReader.Data.Entities;
 
-[Table("Column")]
-public class ColumnEntity
+[Table("DataField")]
+public class DataFieldEntity
 {
     #region Properties
 
@@ -15,7 +14,7 @@ public class ColumnEntity
     public int Id { get; set; }
 
     [NotNull]
-    public int WorksheetId { get; set; }
+    public int DataSheetId { get; set; }
 
     [NotNull]
     public int Position { get; set; }
@@ -26,21 +25,21 @@ public class ColumnEntity
     #endregion
     #region Methods
 
-    public static ColumnEntity MapFrom(DataField column)
+    public static DataFieldEntity MapFrom(DataField model)
     {
-        ArgumentNullException.ThrowIfNull(column, nameof(column));
-        ArgumentNullException.ThrowIfNull(column.Name, nameof(column.Name));
+        ArgumentNullException.ThrowIfNull(model, nameof(model));
+        ArgumentNullException.ThrowIfNull(model.Name, nameof(model.Name));
 
-        return new ColumnEntity
+        return new DataFieldEntity
         {
-            Id = column.Id,
-            WorksheetId = column.DataSheetId,
-            Position = column.Position,
-            Name = column.Name,
+            Id = model.Id,
+            DataSheetId = model.DataSheetId,
+            Position = model.Position,
+            Name = model.Name,
         };
     }
 
-    public static DataField MapTo(ColumnEntity entity)
+    public static DataField MapTo(DataFieldEntity entity)
     {
         ArgumentNullException.ThrowIfNull(entity, nameof(entity));
         ArgumentNullException.ThrowIfNull(entity.Name, nameof(entity.Name));
@@ -48,7 +47,7 @@ public class ColumnEntity
         return new DataField
         {
             Id = entity.Id,
-            DataSheetId = entity.WorksheetId,
+            DataSheetId = entity.DataSheetId,
             Position = entity.Position,
             Name = entity.Name,
         };

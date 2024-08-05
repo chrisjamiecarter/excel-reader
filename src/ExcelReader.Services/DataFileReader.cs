@@ -21,7 +21,7 @@ public class DataFileReader : IDataFileReader
                 DataFields = GenerateDataFields(worksheet),
 
                 // Rows and Cells.
-                DataRows = GenerateDataRows(worksheet)
+                DataSheetRows = GenerateDataRows(worksheet)
             };
 
             dataSheets.Add(dataSheet);

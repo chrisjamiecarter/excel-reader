@@ -13,37 +13,37 @@ public partial class DatabaseService : IDatabaseService
     /// <returns>The ID of the created entity.</returns>
     public async Task<int> CreateAsync(DataFile workbook)
     {
-        var entity = WorkbookEntity.MapFrom(workbook);
+        var entity = DataFileEntity.MapFrom(workbook);
 
-        return await _unitOfWork.Workbooks.AddAndGetIdAsync(entity);
+        return await _unitOfWork.DataFiles.AddAndGetIdAsync(entity);
     }
 
     public async Task<IReadOnlyList<DataFile>> GetDataFilesAsync()
     {
-        var output = await _unitOfWork.Workbooks.GetAsync();
-        return output.Select(WorkbookEntity.MapTo).ToList();
+        var output = await _unitOfWork.DataFiles.GetAsync();
+        return output.Select(DataFileEntity.MapTo).ToList();
     }
 
     public async Task<DataFile?> GetDataFileAsync(int id)
     {
-        var output = await _unitOfWork.Workbooks.GetAsync(id);
-        return output is null ? null : WorkbookEntity.MapTo(output);
+        var output = await _unitOfWork.DataFiles.GetAsync(id);
+        return output is null ? null : DataFileEntity.MapTo(output);
     }
 
     public async Task<bool> UpdateAsync(DataFile workbook)
     {
-        var entity = WorkbookEntity.MapFrom(workbook);
+        var entity = DataFileEntity.MapFrom(workbook);
 
-        var result = await _unitOfWork.Workbooks.UpdateAsync(entity);
+        var result = await _unitOfWork.DataFiles.UpdateAsync(entity);
 
         return result > 0;
     }
 
     public async Task<bool> DeleteAsync(DataFile workbook)
     {
-        var entity = WorkbookEntity.MapFrom(workbook);
+        var entity = DataFileEntity.MapFrom(workbook);
 
-        var result = await _unitOfWork.Workbooks.DeleteAsync(entity);
+        var result = await _unitOfWork.DataFiles.DeleteAsync(entity);
 
         return result > 0;
     }

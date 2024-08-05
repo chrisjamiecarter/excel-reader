@@ -3,8 +3,8 @@ using SQLite;
 
 namespace ExcelReader.Data.Entities;
 
-[Table("Cell")]
-public class CellEntity
+[Table("DataItem")]
+public class DataItemEntity
 {
     #region Properties
 
@@ -14,10 +14,10 @@ public class CellEntity
     public int Id { get; set; }
 
     [NotNull]
-    public int ColumnId { get; set; }
+    public int DataFieldId { get; set; }
 
     [NotNull]
-    public int RowId { get; set; }
+    public int DataSheetRowId { get; set; }
 
     [NotNull]
     public int Position { get; set; }
@@ -28,22 +28,22 @@ public class CellEntity
     #endregion
     #region Methods
 
-    public static CellEntity MapFrom(DataItem cell)
+    public static DataItemEntity MapFrom(DataItem model)
     {
-        ArgumentNullException.ThrowIfNull(cell, nameof(cell));
-        ArgumentNullException.ThrowIfNull(cell.Value, nameof(cell.Value));
+        ArgumentNullException.ThrowIfNull(model, nameof(model));
+        ArgumentNullException.ThrowIfNull(model.Value, nameof(model.Value));
 
-        return new CellEntity
+        return new DataItemEntity
         {
-            Id = cell.Id,
-            ColumnId = cell.DataFieldId,
-            RowId = cell.DataRowId,
-            Position = cell.Position,
-            Value = cell.Value,
+            Id = model.Id,
+            DataFieldId = model.DataFieldId,
+            DataSheetRowId = model.DataSheetRowId,
+            Position = model.Position,
+            Value = model.Value,
         };
     }
 
-    public static DataItem MapTo(CellEntity entity)
+    public static DataItem MapTo(DataItemEntity entity)
     {
         ArgumentNullException.ThrowIfNull(entity, nameof(entity));
         ArgumentNullException.ThrowIfNull(entity.Value, nameof(entity.Value));
@@ -51,8 +51,8 @@ public class CellEntity
         return new DataItem
         {
             Id = entity.Id,
-            DataFieldId = entity.ColumnId,
-            DataRowId = entity.RowId,
+            DataFieldId = entity.DataFieldId,
+            DataSheetRowId = entity.DataSheetRowId,
             Position = entity.Position,
             Value = entity.Value,
         };

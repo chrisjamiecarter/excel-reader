@@ -14,7 +14,7 @@ public class DataSheet
 
     public List<DataField> DataFields { get; set; } = [];
     
-    public List<DataSheetRow> DataRows { get; set; } = [];
+    public List<DataSheetRow> DataSheetRows { get; set; } = [];
 
     #endregion
 }

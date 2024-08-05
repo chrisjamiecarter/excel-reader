@@ -2,17 +2,10 @@
 using ExcelReader.Data.Repositories;
 using ExcelReader.Models;
 
-namespace ExcelReader.ConsoleApp.Controllers;
+namespace ExcelReader.Services;
 
-public class WorkbookController : IWorkbookController
+public partial class DatabaseService : IDatabaseService
 {
-    private readonly IUnitOfWork _unitOfWork;
-
-    public WorkbookController(IUnitOfWork unitOfWork)
-    {
-        _unitOfWork = unitOfWork;
-    }
-
     /// <summary>
     /// Creates the Workbook in the Repository and returns the ID of the created entity.
     /// </summary>
@@ -25,13 +18,13 @@ public class WorkbookController : IWorkbookController
         return await _unitOfWork.Workbooks.AddAndGetIdAsync(entity);
     }
 
-    public async Task<IReadOnlyList<DataFile>> GetAsync()
+    public async Task<IReadOnlyList<DataFile>> GetDataFilesAsync()
     {
         var output = await _unitOfWork.Workbooks.GetAsync();
         return output.Select(WorkbookEntity.MapTo).ToList();
     }
 
-    public async Task<DataFile?> GetAsync(int id)
+    public async Task<DataFile?> GetDataFileAsync(int id)
     {
         var output = await _unitOfWork.Workbooks.GetAsync(id);
         return output is null ? null : WorkbookEntity.MapTo(output);

@@ -28,7 +28,6 @@ public class DataFileProcessor : IDataFileProcessor
     {
         ArgumentNullException.ThrowIfNull(fileInfo, nameof(fileInfo));
 
-        // TODO: throw custom exception.
         switch (fileInfo.Extension.ToLower())
         {
             case ".csv":
@@ -38,7 +37,7 @@ public class DataFileProcessor : IDataFileProcessor
                 //SupportedFileExtension.XLSX;
                 return _excelDataFileReader.ReadDataFile(fileInfo);
             default:
-                throw new ArgumentOutOfRangeException(nameof(fileInfo));
+                throw new InvalidOperationException($"Unsupported file type: {fileInfo.Extension}");
         }
     }
 

@@ -23,7 +23,7 @@ public class RowEntity
     #endregion
     #region Methods
 
-    public static RowEntity MapFrom(DataRow row)
+    public static RowEntity MapFrom(DataSheetRow row)
     {
         ArgumentNullException.ThrowIfNull(row, nameof(row));
         
@@ -35,11 +35,11 @@ public class RowEntity
         };
     }
 
-    public static DataRow MapTo(RowEntity entity)
+    public static DataSheetRow MapTo(RowEntity entity)
     {
         ArgumentNullException.ThrowIfNull(entity, nameof(entity));
         
-        return new DataRow
+        return new DataSheetRow
         {
             Id = entity.Id,
             DataSheetId = entity.WorksheetId,

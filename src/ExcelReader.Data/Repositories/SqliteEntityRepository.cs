@@ -199,5 +199,4 @@ public class SqliteEntityRepository<TEntity> : IEntityRepository<TEntity> where 
     }
 
     #endregion
-
 }

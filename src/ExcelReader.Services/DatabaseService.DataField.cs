@@ -2,17 +2,10 @@
 using ExcelReader.Data.Repositories;
 using ExcelReader.Models;
 
-namespace ExcelReader.ConsoleApp.Controllers;
+namespace ExcelReader.Services;
 
-public class ColumnController : IColumnController
+public partial class DatabaseService : IDatabaseService
 {
-    private readonly IUnitOfWork _unitOfWork;
-
-    public ColumnController(IUnitOfWork unitOfWork)
-    {
-        _unitOfWork = unitOfWork;
-    }
-
     /// <summary>
     /// Creates the Column in the Repository and returns the ID of the created entity.
     /// </summary>
@@ -25,19 +18,19 @@ public class ColumnController : IColumnController
         return await _unitOfWork.Columns.AddAndGetIdAsync(entity);
     }
 
-    public async Task<IReadOnlyList<DataField>> GetAsync()
+    public async Task<IReadOnlyList<DataField>> GetDataFieldsAsync()
     {
         var output = await _unitOfWork.Columns.GetAsync();
         return output.Select(ColumnEntity.MapTo).ToList();
     }
 
-    public async Task<DataField?> GetAsync(int id)
+    public async Task<DataField?> GetDataFieldAsync(int id)
     {
         var output = await _unitOfWork.Columns.GetAsync(id);
         return output is null ? null : ColumnEntity.MapTo(output);
     }
 
-    public async Task<IReadOnlyList<DataField>> GetByWorksheetIdAsync(int worksheetId)
+    public async Task<IReadOnlyList<DataField>> GetDataFieldsByWorksheetIdAsync(int worksheetId)
     {
         var output = await _unitOfWork.Columns.GetByWorksheetIdAsync(worksheetId);
         return output.Select(ColumnEntity.MapTo).ToList();

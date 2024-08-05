@@ -1,5 +1,4 @@
-﻿using ExcelReader.ConsoleApp.Controllers;
-using ExcelReader.Data.Repositories;
+﻿using ExcelReader.Data.Repositories;
 using ExcelReader.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,12 +10,6 @@ public static class IServiceCollectionExtension
     {
         // App.
         services.AddHostedService<App>();
-        services.AddScoped<IDatabaseController, DatabaseController>();
-        services.AddScoped<IWorkbookController, WorkbookController>();
-        services.AddScoped<IWorksheetController, WorksheetController>();
-        services.AddScoped<IColumnController, ColumnController>();
-        services.AddScoped<IRowController, RowController>();
-        services.AddScoped<ICellController, CellController>();
 
         // Data.
         services.AddSingleton(typeof(IRepository<>), typeof(SqliteRepository<>));
@@ -33,5 +26,6 @@ public static class IServiceCollectionExtension
         services.AddScoped<IDataFileReader, DataFileReader>();
         services.AddScoped<ICsvDataFileReader, CsvDataFileReader>();
         services.AddScoped<IExcelDataFileReader, ExcelDataFileReader>();
+        services.AddScoped<IDatabaseService, DatabaseService>();
     }
 }

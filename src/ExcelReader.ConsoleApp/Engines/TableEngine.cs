@@ -10,10 +10,11 @@ internal class TableEngine
 {
     #region Methods
 
-    internal static Table GetTable(DataSheet worksheet)
+    internal static Table GetTable(string title, DataSheet worksheet)
     {
         var table = new Table
         {
+            Title = new TableTitle(title),
             Caption = new TableTitle($"{worksheet.DataRows.Count} rows."),
             Expand = true,
         };

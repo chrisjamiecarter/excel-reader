@@ -2,17 +2,10 @@
 using ExcelReader.Data.Repositories;
 using ExcelReader.Models;
 
-namespace ExcelReader.ConsoleApp.Controllers;
+namespace ExcelReader.Services;
 
-public class CellController : ICellController
+public partial class DatabaseService : IDatabaseService
 {
-    private readonly IUnitOfWork _unitOfWork;
-
-    public CellController(IUnitOfWork unitOfWork)
-    {
-        _unitOfWork = unitOfWork;
-    }
-
     /// <summary>
     /// Creates the Cell in the Repository and returns the ID of the created entity.
     /// </summary>
@@ -25,19 +18,19 @@ public class CellController : ICellController
         return await _unitOfWork.Cells.AddAndGetIdAsync(entity);
     }
 
-    public async Task<IReadOnlyList<DataItem>> GetAsync()
+    public async Task<IReadOnlyList<DataItem>> GetDataItemsAsync()
     {
         var output = await _unitOfWork.Cells.GetAsync();
         return output.Select(CellEntity.MapTo).ToList();
     }
 
-    public async Task<DataItem?> GetAsync(int id)
+    public async Task<DataItem?> GetDataItemAsync(int id)
     {
         var output = await _unitOfWork.Cells.GetAsync(id);
         return output is null ? null : CellEntity.MapTo(output);
     }
 
-    public async Task<IReadOnlyList<DataItem>> GetByRowIdAsync(int rowId)
+    public async Task<IReadOnlyList<DataItem>> GetDataItemsByRowIdAsync(int rowId)
     {
         var output = await _unitOfWork.Cells.GetByRowIdAsync(rowId);
         return output.Select(CellEntity.MapTo).ToList();

@@ -2,17 +2,10 @@
 using ExcelReader.Data.Repositories;
 using ExcelReader.Models;
 
-namespace ExcelReader.ConsoleApp.Controllers;
+namespace ExcelReader.Services;
 
-public class WorksheetController : IWorksheetController
+public partial class DatabaseService : IDatabaseService
 {
-    private readonly IUnitOfWork _unitOfWork;
-
-    public WorksheetController(IUnitOfWork unitOfWork)
-    {
-        _unitOfWork = unitOfWork;
-    }
-
     /// <summary>
     /// Creates the Worksheet in the Repository and returns the ID of the created entity.
     /// </summary>
@@ -25,19 +18,19 @@ public class WorksheetController : IWorksheetController
         return await _unitOfWork.Worksheets.AddAndGetIdAsync(entity);
     }
 
-    public async Task<IReadOnlyList<DataSheet>> GetAsync()
+    public async Task<IReadOnlyList<DataSheet>> GetDataSheetsAsync()
     {
         var output = await _unitOfWork.Worksheets.GetAsync();
         return output.Select(WorksheetEntity.MapTo).ToList();
     }
 
-    public async Task<DataSheet?> GetAsync(int id)
+    public async Task<DataSheet?> GetDataSheetAsync(int id)
     {
         var output = await _unitOfWork.Worksheets.GetAsync(id);
         return output is null ? null : WorksheetEntity.MapTo(output);
     }
 
-    public async Task<IReadOnlyList<DataSheet>> GetByWorkbookIdAsync(int workbookId)
+    public async Task<IReadOnlyList<DataSheet>> GetDataSheetsByWorkbookIdAsync(int workbookId)
     {
         var output = await _unitOfWork.Worksheets.GetByWorkbookIdAsync(workbookId);
         return output.Select(WorksheetEntity.MapTo).ToList();
